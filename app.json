@@ -1,28 +1,38 @@
 {
   "expo": {
-    "name": "ai-stock-analyzer",
-    "slug": "ai-stock-analyzer",
+    "name": "ChartMasterAI",
+    "slug": "chartmasterai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "aistockanalyzer",
-    "userInterfaceStyle": "automatic",
+    "scheme": "chartmasterai",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#6C3EFF"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ab1224.chartmasterai",
+      "infoPlist": {
+        "GADApplicationIdentifier": "ca-app-pub-5502322146754674~1994437043",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "cstr6suwn9.skadnetwork"
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#6C3EFF"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ab1224.chartmasterai"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +44,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "12327bb6-9a99-4859-a2af-321e96e289ff"
+      }
     }
   }
 }
