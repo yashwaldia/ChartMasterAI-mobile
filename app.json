@@ -32,10 +32,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.ab1224.chartmasterai",
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-5502322146754674~1994437043"
-      }
+      "package": "com.ab1224.chartmasterai"
     },
     "web": {
       "bundler": "metro",
@@ -53,6 +50,10 @@
       "eas": {
         "projectId": "12327bb6-9a99-4859-a2af-321e96e289ff"
       }
+    },
+    "react-native-google-mobile-ads": {
+      "android_app_id": "ca-app-pub-5502322146754674~1994437043",
+      "ios_app_id": "ca-app-pub-5502322146754674~1994437043"
     }
   }
 }
