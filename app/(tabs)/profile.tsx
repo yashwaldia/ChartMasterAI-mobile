@@ -4,6 +4,7 @@ import { View, ScrollView, Text, StyleSheet, Linking, TouchableOpacity, Image } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
+import { sendTestGlobalNotification } from '../../services/globalNotificationService';
 
 const APP_VERSION = '1.0.0';
 const BUILD_LABEL = 'Mobile Beta';
@@ -307,6 +308,18 @@ export default function AboutScreen() {
               Made with ❤️ for traders
             </Text>
           </View>
+{/* Test Notification Button */}
+<TouchableOpacity
+  style={[styles.testButton, { backgroundColor: theme.warning }]}
+  onPress={sendTestGlobalNotification}
+  activeOpacity={0.8}
+>
+  <Ionicons name="notifications-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+  <Text style={[styles.testButtonText, { color: '#FFFFFF' }]}>
+    🧪 Test Notification (3 sec)
+  </Text>
+</TouchableOpacity>
+
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -555,5 +568,19 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 12,
     fontWeight: '500',
+  },
+    testButton: {
+    marginTop: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 14,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  testButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
 });

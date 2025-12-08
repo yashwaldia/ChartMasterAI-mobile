@@ -62,7 +62,7 @@ function extractJsonBlock(fullText: string): { cleanText: string; vizData: any }
 
   // Try multiple JSON extraction patterns
   
-  // Pattern 1: JSON in markdown code fence (``````)
+  // Pattern 1: JSON in markdown code fence
   const fencedJsonRegex = /``````/;
   const fencedMatch = fullText.match(fencedJsonRegex);
   
@@ -76,11 +76,10 @@ function extractJsonBlock(fullText: string): { cleanText: string; vizData: any }
       return { cleanText, vizData };
     } catch (e) {
       console.error('❌ Failed to parse fenced JSON:', e);
-      console.log('📄 Raw fenced JSON:', fencedMatch[1].substring(0, 200));
     }
   }
 
-  // Pattern 2: Raw JSON at end of string (no fence)
+  // Pattern 2: Raw JSON at end of string
   const rawJsonRegex = /(\{[\s\S]*\})\s*$/;
   const rawMatch = fullText.match(rawJsonRegex);
   
@@ -90,26 +89,21 @@ function extractJsonBlock(fullText: string): { cleanText: string; vizData: any }
       cleanText = fullText.slice(0, rawMatch.index).trim();
       cleanText = postProcessMarkdown(cleanText);
       console.log('✅ Parsed raw JSON from end of text');
-      console.log('📊 vizData:', JSON.stringify(vizData, null, 2));
       return { cleanText, vizData };
     } catch (e) {
       console.error('❌ Failed to parse raw JSON:', e);
-      console.log('📄 Raw JSON candidate:', rawMatch[1].substring(0, 200));
     }
   }
 
-  // Pattern 3: Look for any JSON-like object with key identifiers
-  // This regex looks for objects containing buySellScore or globalRiskScore
+  // Pattern 3: Look for any JSON-like object
   const anyJsonRegex = /\{[^{}]*"(?:buySellScore|globalRiskScore|riskScore)"[^{}]*:[\s\S]*?\}/;
   const anyMatch = fullText.match(anyJsonRegex);
   
   if (anyMatch) {
-    // Try to expand the match to include full nested objects
     let jsonCandidate = anyMatch[0];
     let braceCount = 0;
     let startIndex = fullText.indexOf(jsonCandidate);
     
-    // Find the complete JSON by counting braces
     for (let i = startIndex; i < fullText.length; i++) {
       if (fullText[i] === '{') braceCount++;
       if (fullText[i] === '}') braceCount--;
@@ -124,39 +118,25 @@ function extractJsonBlock(fullText: string): { cleanText: string; vizData: any }
       cleanText = fullText.replace(jsonCandidate, '').trim();
       cleanText = postProcessMarkdown(cleanText);
       console.log('✅ Parsed inline JSON');
-      console.log('📊 vizData:', JSON.stringify(vizData, null, 2));
       return { cleanText, vizData };
     } catch (e) {
       console.error('❌ Failed to parse inline JSON:', e);
-      console.log('📄 JSON candidate:', jsonCandidate.substring(0, 200));
     }
   }
 
   console.warn('⚠️ No JSON found in AI response');
-  console.log('📄 Full text preview:', fullText.substring(0, 500));
-  console.log('📄 Full text ending:', fullText.substring(fullText.length - 500));
-  
   cleanText = postProcessMarkdown(cleanText);
   return { cleanText, vizData: {} };
 }
 
-// Fix common formatting issues
 function postProcessMarkdown(text: string): string {
   let out = text;
-  
-  // 1) Normalize any five-apostrophe "highlight" patterns → bold
   out = out.replace(/'''''([\s\S]*?)'''''/g, '**$1**');
-  
-  // 2) Replace double single-quotes used as fake bold: ''text'' → **text**
   out = out.replace(/''([^'\n]+)''/g, '**$1**');
-  
-  // 3) Make sure there is whitespace around bold markers
   out = out.replace(/\*\*([^\*]+)\*\*(?=\S)/g, '**$1** ');
-  
   return out.trim();
 }
 
-// Convert file URI to base64 (Expo / RN)
 async function fileToBase64(uri: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -166,9 +146,10 @@ async function fileToBase64(uri: string): Promise<string> {
         const base64data = (reader.result as string).split(',')[1];
         resolve(base64data);
       };
+      reader.onerror = () => reject(new Error('Failed to read image file'));
       reader.readAsDataURL(xhr.response);
     };
-    xhr.onerror = reject;
+    xhr.onerror = () => reject(new Error('Network error while loading image'));
     xhr.open('GET', uri);
     xhr.responseType = 'blob';
     xhr.send();
@@ -188,7 +169,12 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    
+    // ✅ CORRECT: Use gemini-2.5-flash (stable, released June 2025)
+    // Alternative: 'gemini-2.0-flash' also works
+    this.model = this.genAI.getGenerativeModel({ 
+      model: 'gemini-2.5-flash'
+    });
   }
 
   async analyzeStockChart(
@@ -198,21 +184,35 @@ export class GeminiService {
     indicators?: string[],
     mode?: 'SINGLECHART' | 'MULTICHART' | 'STRATEGYONLY',
   ): Promise<{ text: string; vizData: any }> {
-    const imageParts = await Promise.all(
-      images.map(async uri => ({
-        inlineData: {
-          data: await fileToBase64(uri),
-          mimeType: 'image/jpeg',
-        },
-      })),
-    );
+    try {
+      if (!images || images.length === 0) {
+        throw new Error('No images provided for analysis');
+      }
 
-    const modeLabel = mode === 'SINGLECHART' ? 'Single Chart' 
-                    : mode === 'MULTICHART' ? 'Multi Chart' 
-                    : mode === 'STRATEGYONLY' ? 'Strategy Only' 
-                    : 'Standard';
+      console.log('🔄 Converting images to base64...');
+      const imageParts = await Promise.all(
+        images.map(async uri => {
+          try {
+            const base64Data = await fileToBase64(uri);
+            return {
+              inlineData: {
+                data: base64Data,
+                mimeType: 'image/jpeg',
+              },
+            };
+          } catch (error) {
+            console.error('❌ Failed to process image:', uri, error);
+            throw new Error('Failed to process image. Please try again.');
+          }
+        }),
+      );
 
-    const prompt = `MODE: STOCK (${modeLabel})
+      const modeLabel = mode === 'SINGLECHART' ? 'Single Chart' 
+                      : mode === 'MULTICHART' ? 'Multi Chart' 
+                      : mode === 'STRATEGYONLY' ? 'Strategy Only' 
+                      : 'Standard';
+
+      const prompt = `MODE: STOCK (${modeLabel})
 COUNTRY: ${country === 'IN' ? 'India (INR)' : 'International (USD)'}
 ${strategyRules ? `STRATEGY RULES: ${strategyRules}` : ''}
 ${indicators?.length ? `FOCUS INDICATORS: ${indicators.join(', ')}` : ''}
@@ -228,45 +228,69 @@ TASK:
 - At the very end, append a single JSON object matching the STOCK MODE JSON FORMAT.
 - Do NOT wrap the JSON in backticks or markdown fences.`;
 
-    console.log('🚀 Sending request to Gemini API...');
+      console.log('🚀 Sending request to Gemini API...');
 
-    const result = await this.model.generateContent({
-      contents: [
-        {
-          role: 'user',
-          parts: [...imageParts, { text: prompt }],
+      const result = await this.model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [...imageParts, { text: prompt }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.6,
         },
-      ],
-      generationConfig: {
-        temperature: 0.6,
-      },
-      systemInstruction: {
-        role: 'system',
-        parts: [{ text: SYSTEM_INSTRUCTION }],
-      },
-    });
+        systemInstruction: {
+          role: 'system',
+          parts: [{ text: SYSTEM_INSTRUCTION }],
+        },
+      });
 
-    const response = await result.response;
-    const fullText = response.text();
-    
-    console.log('📥 AI Response received');
-    console.log('📏 Length:', fullText.length, 'characters');
-    console.log('📄 Preview:', fullText.substring(0, 200));
-    console.log('📄 Ending:', fullText.substring(fullText.length - 200));
-    
-    const { cleanText, vizData } = extractJsonBlock(fullText);
+      const response = await result.response;
+      const fullText = response.text();
+      
+      console.log('📥 AI Response received');
+      console.log('📏 Length:', fullText.length, 'characters');
+      
+      const { cleanText, vizData } = extractJsonBlock(fullText);
 
-    console.log('✅ Processing complete');
-    console.log('📊 Final vizData keys:', Object.keys(vizData));
+      console.log('✅ Processing complete');
+      console.log('📊 Final vizData keys:', Object.keys(vizData));
 
-    return { text: cleanText, vizData };
+      return { text: cleanText, vizData };
+    } catch (error: any) {
+      console.error('❌ Stock analysis error:', error);
+      
+      if (error.message?.includes('API key') || error.message?.includes('401')) {
+        throw new Error('Invalid API key. Please check your Gemini API key in settings.');
+      }
+      if (error.message?.includes('404') || error.message?.includes('not found')) {
+        throw new Error('Please update the @google/generative-ai package to the latest version.');
+      }
+      if (error.message?.includes('fetch') || error.message?.includes('network')) {
+        throw new Error('Network error. Please check your internet connection and try again.');
+      }
+      if (error.message?.includes('quota') || error.message?.includes('limit') || error.message?.includes('429')) {
+        throw new Error('Daily API limit reached. Please try again tomorrow.');
+      }
+      if (error.message?.includes('image')) {
+        throw new Error(error.message);
+      }
+      
+      throw new Error('Analysis failed. Please try again or contact support if the issue persists.');
+    }
   }
 
   async analyzeGlobalMarkets(
     marketData: string,
     country: string,
   ): Promise<{ text: string; vizData: any }> {
-    const prompt = `MODE: GLOBAL MARKETS
+    try {
+      if (!marketData || marketData.trim().length === 0) {
+        throw new Error('Please add at least one market index to analyze');
+      }
+
+      const prompt = `MODE: GLOBAL MARKETS
 COUNTRY: ${country === 'IN' ? 'India (INR)' : 'International (USD)'}
 
 MARKET DATA INPUT:
@@ -281,38 +305,57 @@ TASK:
 - At the very end, append a single JSON object matching the GLOBAL MARKETS JSON FORMAT.
 - Do NOT wrap the JSON in backticks or markdown fences. No commentary after the JSON.`;
 
-    console.log('🚀 Sending global markets request to Gemini API...');
+      console.log('🚀 Sending global markets request to Gemini API...');
 
-    const result = await this.model.generateContent({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }],
+      const result = await this.model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.6,
         },
-      ],
-      generationConfig: {
-        temperature: 0.6,
-      },
-      systemInstruction: {
-        role: 'system',
-        parts: [{ text: SYSTEM_INSTRUCTION }],
-      },
-    });
+        systemInstruction: {
+          role: 'system',
+          parts: [{ text: SYSTEM_INSTRUCTION }],
+        },
+      });
 
-    const response = await result.response;
-    const fullText = response.text();
-    
-    console.log('📥 AI Response received');
-    console.log('📏 Length:', fullText.length, 'characters');
-    console.log('📄 Preview:', fullText.substring(0, 200));
-    console.log('📄 Ending:', fullText.substring(fullText.length - 200));
-    
-    const { cleanText, vizData } = extractJsonBlock(fullText);
+      const response = await result.response;
+      const fullText = response.text();
+      
+      console.log('📥 AI Response received');
+      console.log('📏 Length:', fullText.length, 'characters');
+      
+      const { cleanText, vizData } = extractJsonBlock(fullText);
 
-    console.log('✅ Processing complete');
-    console.log('📊 Final vizData keys:', Object.keys(vizData));
+      console.log('✅ Processing complete');
+      console.log('📊 Final vizData keys:', Object.keys(vizData));
 
-    return { text: cleanText, vizData };
+      return { text: cleanText, vizData };
+    } catch (error: any) {
+      console.error('❌ Global markets analysis error:', error);
+      
+      if (error.message?.includes('API key') || error.message?.includes('401')) {
+        throw new Error('Invalid API key. Please check your Gemini API key in settings.');
+      }
+      if (error.message?.includes('404') || error.message?.includes('not found')) {
+        throw new Error('Please update the @google/generative-ai package to the latest version.');
+      }
+      if (error.message?.includes('fetch') || error.message?.includes('network')) {
+        throw new Error('Network error. Please check your internet connection and try again.');
+      }
+      if (error.message?.includes('quota') || error.message?.includes('limit') || error.message?.includes('429')) {
+        throw new Error('Daily API limit reached. Please try again tomorrow.');
+      }
+      if (error.message === 'Please add at least one market index to analyze') {
+        throw new Error(error.message);
+      }
+      
+      throw new Error('Analysis failed. Please try again or contact support if the issue persists.');
+    }
   }
 }
 

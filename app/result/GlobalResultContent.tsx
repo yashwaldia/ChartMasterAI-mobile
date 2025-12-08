@@ -31,7 +31,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
     if (!active.regionalStrength) return null;
 
     const regions = [
-      { key: 'US', label: 'US', icon: 'flag-us-outline' },
+      { key: 'US', label: 'US', icon: 'flag-outline' },
       { key: 'India', label: 'India', icon: 'flag' },
       { key: 'Europe', label: 'Europe', icon: 'earth-outline' },
       { key: 'Asia', label: 'Asia', icon: 'earth-outline' },
