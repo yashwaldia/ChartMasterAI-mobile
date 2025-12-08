@@ -4,7 +4,7 @@
     "slug": "chartmasterai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logoo.png",
+    "icon": "./assets/images/icon-logo.png",
     "scheme": "chartmasterai",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -27,12 +27,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logoo.png",
+        "foregroundImage": "./assets/images/icon-logo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.ab1224.chartmasterai"
+      "package": "com.ab1224.chartmasterai",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5502322146754674~1994437043"
+      }
     },
     "web": {
       "bundler": "metro",
