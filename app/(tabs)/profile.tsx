@@ -15,6 +15,14 @@ export default function AboutScreen() {
     Linking.openURL('https://chartmasterai.com').catch(() => {});
   };
 
+  const handleOpenPrivacyPolicy = () => {
+    Linking.openURL('https://www.chartmasterai.com/privacy').catch(() => {});
+  };
+
+  const handleOpenTerms = () => {
+    Linking.openURL('https://www.chartmasterai.com/terms').catch(() => {});
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={['top', 'left', 'right']}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -247,12 +255,38 @@ export default function AboutScreen() {
               the support channels on our website or via email at support@chartmasterai.com
             </Text>
             <Text style={[styles.bodyText, { color: theme.mutedText }]}>
-              By using this app, you agree to the Terms of Service and Privacy Policy provided 
-              on the ChartMasterAI website.
+              By using this app, you agree to the Terms of Service and Privacy Policy.
             </Text>
 
-            {/* Uncomment when you have a website */}
-            {/* <TouchableOpacity
+            {/* Privacy Policy & Terms Buttons */}
+            <View style={styles.legalButtonsContainer}>
+              <TouchableOpacity
+                style={[styles.legalButton, { backgroundColor: theme.elevatedCard, borderColor: theme.primary }]}
+                onPress={handleOpenPrivacyPolicy}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="shield-checkmark-outline" size={18} color={theme.primary} />
+                <Text style={[styles.legalButtonText, { color: theme.text }]}>
+                  Privacy Policy
+                </Text>
+                <Ionicons name="open-outline" size={14} color={theme.mutedText} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.legalButton, { backgroundColor: theme.elevatedCard, borderColor: theme.primary }]}
+                onPress={handleOpenTerms}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="document-text-outline" size={18} color={theme.primary} />
+                <Text style={[styles.legalButtonText, { color: theme.text }]}>
+                  Terms of Service
+                </Text>
+                <Ionicons name="open-outline" size={14} color={theme.mutedText} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Website Button */}
+            <TouchableOpacity
               style={[styles.websiteButton, { backgroundColor: theme.primary }]}
               onPress={handleOpenWebsite}
               activeOpacity={0.8}
@@ -261,7 +295,7 @@ export default function AboutScreen() {
               <Text style={[styles.websiteButtonText, { color: theme.primaryText }]}>
                 Visit Website
               </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
 
           {/* Footer Info */}
@@ -269,9 +303,9 @@ export default function AboutScreen() {
             <Text style={[styles.footerText, { color: theme.mutedText }]}>
               © 2025 ChartMasterAI
             </Text>
-            {/* <Text style={[styles.footerText, { color: theme.mutedText }]}>
+            <Text style={[styles.footerText, { color: theme.mutedText }]}>
               Made with ❤️ for traders
-            </Text> */}
+            </Text>
           </View>
         </ScrollView>
       </View>
@@ -477,6 +511,27 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 20,
     marginBottom: 12,
+  },
+  legalButtonsContainer: {
+    gap: 10,
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  legalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+  },
+  legalButtonText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 10,
+    letterSpacing: -0.2,
   },
   websiteButton: {
     marginTop: 8,
