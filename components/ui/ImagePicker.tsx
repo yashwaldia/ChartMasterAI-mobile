@@ -1,4 +1,3 @@
-// components/ui/ImagePicker.tsx
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,7 +18,7 @@ export default function ImagePickerComponent({
   const [loading, setLoading] = useState(false);
   const theme = Colors.dark;
 
-  const pickImage = async () => {
+  const pickFromGallery = async () => {
     if (images.length >= maxImages) {
       Alert.alert('Limit Reached', `Maximum ${maxImages} images allowed`);
       return;
@@ -38,8 +37,44 @@ export default function ImagePickerComponent({
         setImages(prev => [...prev, uri]);
       }
     } catch (error) {
-      console.error('Image picker error:', error);
-      Alert.alert('Error', 'Failed to pick image. Please try again.');
+      console.error('Gallery picker error:', error);
+      Alert.alert('Error', 'Failed to pick image from gallery. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pickFromCamera = async () => {
+    if (images.length >= maxImages) {
+      Alert.alert('Limit Reached', `Maximum ${maxImages} images allowed`);
+      return;
+    }
+
+    // Request camera permissions
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Camera Permission Required',
+        'Please grant camera permission to take photos.'
+      );
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false,
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri;
+        setImages(prev => [...prev, uri]);
+      }
+    } catch (error) {
+      console.error('Camera picker error:', error);
+      Alert.alert('Error', 'Failed to capture photo. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -49,41 +84,65 @@ export default function ImagePickerComponent({
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const isUploadDisabled = loading || images.length >= maxImages;
+
   return (
     <View style={styles.container}>
-      {/* Upload Area */}
-      <TouchableOpacity
-        style={[
-          styles.uploadArea,
-          {
-            borderColor: theme.border,
-            backgroundColor: theme.elevatedCard,
-          },
-          images.length >= maxImages && styles.uploadAreaDisabled,
-        ]}
-        onPress={pickImage}
-        disabled={loading || images.length >= maxImages}
-        activeOpacity={0.7}
-      >
-        <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
-          <Ionicons
-            name={loading ? 'hourglass-outline' : 'images-outline'}
-            size={32}
-            color={theme.primary}
-          />
-        </View>
-        <Text style={[styles.uploadText, { color: theme.text }]}>
-          {loading ? 'Processing...' : 'Tap to upload images'}
-        </Text>
-        <Text style={[styles.uploadSubtext, { color: theme.mutedText }]}>
-          Supports multi-timeframe charts
-        </Text>
-        <View style={[styles.limitBadge, { backgroundColor: theme.primary + '20' }]}>
-          <Text style={[styles.limitText, { color: theme.primary }]}>
-            {images.length} selected
+      {/* Upload Buttons Row */}
+      <View style={styles.buttonRow}>
+        {/* Gallery Button */}
+        <TouchableOpacity
+          style={[
+            styles.uploadButton,
+            {
+              borderColor: theme.border,
+              backgroundColor: theme.elevatedCard,
+            },
+            isUploadDisabled && styles.uploadButtonDisabled,
+          ]}
+          onPress={pickFromGallery}
+          disabled={isUploadDisabled}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="images-outline" size={28} color={theme.primary} />
+          <Text style={[styles.buttonText, { color: theme.text }]}>Gallery</Text>
+        </TouchableOpacity>
+
+        {/* Camera Button */}
+        <TouchableOpacity
+          style={[
+            styles.uploadButton,
+            {
+              borderColor: theme.primary,
+              backgroundColor: theme.primary + '15',
+            },
+            isUploadDisabled && styles.uploadButtonDisabled,
+          ]}
+          onPress={pickFromCamera}
+          disabled={isUploadDisabled}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="camera-outline" size={28} color={theme.primary} />
+          <Text style={[styles.buttonText, { color: theme.primary }]}>Camera</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Loading Indicator */}
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <Ionicons name="hourglass-outline" size={20} color={theme.primary} />
+          <Text style={[styles.loadingText, { color: theme.mutedText }]}>
+            Processing...
           </Text>
         </View>
-      </TouchableOpacity>
+      )}
+
+      {/* Image Limit Badge */}
+      <View style={[styles.limitBadge, { backgroundColor: theme.primary + '20' }]}>
+        <Text style={[styles.limitText, { color: theme.primary }]}>
+          {images.length}/{maxImages} selected
+        </Text>
+      </View>
 
       {/* Image Previews */}
       {images.length > 0 && (
@@ -123,44 +182,49 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 0,
   },
-  uploadArea: {
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+  },
+  uploadButton: {
+    flex: 1,
     borderWidth: 2,
     borderStyle: 'dashed',
     borderRadius: 16,
-    paddingVertical: 28,
-    paddingHorizontal: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 80,
   },
-  uploadAreaDisabled: {
+  uploadButtonDisabled: {
     opacity: 0.5,
   },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  uploadText: {
-    fontSize: 15,
+  buttonText: {
+    fontSize: 14,
     fontWeight: '700',
     marginTop: 8,
     textAlign: 'center',
     letterSpacing: -0.2,
   },
-  uploadSubtext: {
-    fontSize: 13,
-    fontWeight: '500',
-    marginTop: 6,
-    textAlign: 'center',
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   limitBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
-    marginTop: 12,
+    alignItems: 'center',
+    marginBottom: 16,
   },
   limitText: {
     fontSize: 12,
@@ -171,7 +235,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginTop: 16,
   },
   previewItem: {
     position: 'relative',
