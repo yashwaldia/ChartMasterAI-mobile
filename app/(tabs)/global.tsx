@@ -222,16 +222,7 @@ export default function GlobalScreen() {
           </View>
         </View>
 
-        {/* Banner Ad - Top */}
-        <View style={styles.bannerContainer}>
-          <BannerAd
-            unitId={BANNER_AD_UNIT_ID}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: true,
-            }}
-          />
-        </View>
+
 
         {/* Main Content */}
         <View style={styles.main}>
@@ -353,7 +344,7 @@ export default function GlobalScreen() {
                     color: theme.text,
                   },
                 ]}
-                placeholder="Type index/stock name and press Enter (e.g., Bitcoin, Gold, EUR/USD)"
+                placeholder="Type index/stock name and press Enter"
                 placeholderTextColor={theme.mutedText}
                 value={inputValue}
                 onChangeText={setInputValue}
@@ -413,6 +404,16 @@ export default function GlobalScreen() {
               size="lg"
             />
           </View>
+        </View>
+        {/* Banner Ad - Top */}
+        <View style={styles.bannerContainer}>
+          <BannerAd
+            unitId={BANNER_AD_UNIT_ID}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
         </View>
       </View>
     </SafeAreaView>

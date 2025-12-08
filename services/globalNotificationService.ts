@@ -48,6 +48,20 @@ function getRandomMessage() {
   return GREETING_MESSAGES[idx];
 }
 
+// Calculate seconds until next occurrence of target hour:minute
+function getSecondsUntilTime(hour: number, minute: number): number {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(hour, minute, 0, 0);
+
+  // If target time already passed today, schedule for tomorrow
+  if (target.getTime() <= now.getTime()) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  return Math.floor((target.getTime() - now.getTime()) / 1000);
+}
+
 // Configure how notifications behave in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -127,30 +141,81 @@ export async function scheduleDailyGlobalIntelNotification() {
 
     const { title, body } = getRandomMessage();
 
-    const identifier = await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        data: {
-          feature: 'global-intel',
-          type: 'global-intel',
-          autoGenerate: true, // ← Global screen will auto-run Generate Intel
+    if (Platform.OS === 'ios') {
+      // iOS supports calendar trigger
+      const identifier = await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            feature: 'global-intel',
+            type: 'global-intel',
+            autoGenerate: true,
+          },
+          sound: 'default',
         },
-        sound: 'default',
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-        hour: DAILY_HOUR,
-        minute: DAILY_MINUTE,
-        repeats: true,
-      },
-    });
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+          hour: DAILY_HOUR,
+          minute: DAILY_MINUTE,
+          repeats: true,
+        },
+      });
 
-    console.log(
-      `✅ Scheduled daily global-intel notification at ${DAILY_HOUR}:${DAILY_MINUTE
-        .toString()
-        .padStart(2, '0')} with id: ${identifier}`,
-    );
+      console.log(
+        `✅ [iOS] Scheduled daily global-intel notification at ${DAILY_HOUR}:${DAILY_MINUTE
+          .toString()
+          .padStart(2, '0')} with id: ${identifier}`,
+      );
+    } else {
+      // Android: Schedule first notification at target time
+      const secondsUntilTarget = getSecondsUntilTime(DAILY_HOUR, DAILY_MINUTE);
+      
+      const identifier = await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            feature: 'global-intel',
+            type: 'global-intel',
+            autoGenerate: true,
+          },
+          sound: 'default',
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: secondsUntilTarget,
+          repeats: false,
+          channelId: CHANNEL_ID,
+        },
+      });
+
+      // Schedule daily repeating notification (starts after 24 hours from first trigger)
+      const repeatIdentifier = await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            feature: 'global-intel',
+            type: 'global-intel',
+            autoGenerate: true,
+          },
+          sound: 'default',
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: secondsUntilTarget + 86400, // First repeat after 24 hours
+          repeats: true,
+          channelId: CHANNEL_ID,
+        },
+      });
+
+      console.log(
+        `✅ [Android] Scheduled daily global-intel notification at ${DAILY_HOUR}:${DAILY_MINUTE
+          .toString()
+          .padStart(2, '0')} (first: ${identifier}, repeat: ${repeatIdentifier})`,
+      );
+    }
   } catch (error) {
     console.error('❌ Error scheduling daily global-intel notification:', error);
   }
@@ -187,6 +252,7 @@ export async function sendTestGlobalNotification() {
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: 3,
+        ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
       },
     });
 

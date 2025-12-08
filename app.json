@@ -4,7 +4,7 @@
     "slug": "chartmasterai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logoo.png",
     "scheme": "chartmasterai",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -27,7 +27,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logoo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -50,10 +50,6 @@
       "eas": {
         "projectId": "12327bb6-9a99-4859-a2af-321e96e289ff"
       }
-    },
-    "react-native-google-mobile-ads": {
-      "android_app_id": "ca-app-pub-5502322146754674~1994437043",
-      "ios_app_id": "ca-app-pub-5502322146754674~1994437043"
     }
   }
 }
