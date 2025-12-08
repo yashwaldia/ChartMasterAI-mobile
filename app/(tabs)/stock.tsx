@@ -197,17 +197,6 @@ export default function StockScreen() {
           </View>
         </View>
 
-        {/* Banner Ad - Top */}
-        <View style={styles.bannerContainer}>
-          <BannerAd
-            unitId={BANNER_AD_UNIT_ID}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: true,
-            }}
-          />
-        </View>
-
         {/* Main Content */}
         <View style={styles.main}>
           <ScrollView
@@ -628,6 +617,16 @@ export default function StockScreen() {
               size="lg"
             />
           </View>
+        </View>
+        {/* Banner Ad - Top */}
+        <View style={styles.bannerContainer}>
+          <BannerAd
+            unitId={BANNER_AD_UNIT_ID}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
         </View>
       </View>
     </SafeAreaView>
