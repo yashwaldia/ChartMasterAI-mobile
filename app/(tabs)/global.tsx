@@ -44,7 +44,7 @@ const DEFAULT_INDICES = [
 // Ad Unit IDs
 const BANNER_AD_UNIT_ID = __DEV__
   ? TestIds.BANNER
-  : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID || '';
+  : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID_GLOBAL || '';
 
 
 const INTERSTITIAL_AD_UNIT_ID = __DEV__
