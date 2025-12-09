@@ -8,6 +8,7 @@ export type Plan = 'Free' | 'Pro' | 'Advanced';
 export type StockResult = {
   mode: 'STOCK';
   country: 'IN' | 'OTHER';
+  plan: Plan;
   text: string;
   vizData: any;
   images?: string[];
@@ -32,6 +33,7 @@ type AnalysisContextType = {
   analyzeStock: (params: {
     images: string[];
     country: 'IN' | 'OTHER';
+    plan: Plan;
     mode?: 'SINGLECHART' | 'MULTICHART' | 'STRATEGYONLY';
     strategyRules?: string;
     indicators?: string[];
@@ -54,6 +56,7 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
   const analyzeStock = async (params: {
     images: string[];
     country: 'IN' | 'OTHER';
+    plan: Plan;
     mode?: 'SINGLECHART' | 'MULTICHART' | 'STRATEGYONLY';
     strategyRules?: string;
     indicators?: string[];
@@ -67,11 +70,13 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
         params.strategyRules,
         params.indicators,
         params.mode,
+        params.plan, // ✅ Added plan parameter
       );
 
       const result: StockResult = {
         mode: 'STOCK',
         country: params.country,
+        plan: params.plan, // ✅ Added plan to result
         text,
         vizData,
         images: params.images,

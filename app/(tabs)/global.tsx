@@ -255,14 +255,14 @@ export default function GlobalScreen() {
                       >
                         {pricing.label}
                       </Text>
-                      <Text
+                      {/* <Text
                         style={[
                           styles.planPrice,
                           { color: active ? theme.primaryText : theme.mutedText },
                         ]}
                       >
                         {pricing.price}
-                      </Text>
+                      </Text> */}
                     </TouchableOpacity>
                   );
                 })}

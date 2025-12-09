@@ -28,6 +28,7 @@ import mobileAds, {
 
 const MODES = ['SINGLECHART', 'MULTICHART', 'STRATEGYONLY'] as const;
 const COUNTRIES = ['IN', 'OTHER'] as const;
+const PLANS = ['Free', 'Pro', 'Advanced'] as const;
 const INDICATORS = [
   'MACD',
   'RSI',
@@ -41,6 +42,21 @@ const INDICATORS = [
 
 type Mode = (typeof MODES)[number];
 type Country = (typeof COUNTRIES)[number];
+type Plan = (typeof PLANS)[number];
+
+// Pricing based on country
+const PRICING = {
+  IN: {
+    Free: { price: '₹0', label: 'Free' },
+    Pro: { price: '₹99/mo', label: 'Pro' },
+    Advanced: { price: '₹299/mo', label: 'Advanced' },
+  },
+  OTHER: {
+    Free: { price: '$0', label: 'Free' },
+    Pro: { price: '$4.99/mo', label: 'Pro' },
+    Advanced: { price: '$9.99/mo', label: 'Advanced' },
+  },
+};
 
 // Ad Unit IDs
 const BANNER_AD_UNIT_ID = __DEV__
@@ -58,6 +74,7 @@ export default function StockScreen() {
 
   const [mode, setMode] = useState<Mode>('SINGLECHART');
   const [country, setCountry] = useState<Country>('IN');
+  const [plan, setPlan] = useState<Plan>('Free');
   const [strategyRules, setStrategyRules] = useState('');
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
@@ -86,7 +103,6 @@ export default function StockScreen() {
 
     const unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
       setInterstitialLoaded(false);
-      // Reload ad for next time
       ad.load();
     });
 
@@ -100,10 +116,13 @@ export default function StockScreen() {
   }, []);
 
   const toggleIndicator = (indicator: string) => {
+    // Free plan: max 3 indicators (RSI, MACD, EMA only)
+    const maxIndicators = plan === 'Free' ? 3 : 5;
+    
     setSelectedIndicators(prev =>
       prev.includes(indicator)
         ? prev.filter(i => i !== indicator)
-        : [...prev, indicator].slice(0, 5),
+        : [...prev, indicator].slice(0, maxIndicators),
     );
   };
 
@@ -123,12 +142,10 @@ export default function StockScreen() {
     // Show interstitial ad before analysis
     if (interstitialLoaded && interstitialAd) {
       interstitialAd.show();
-      // Wait a moment for ad to close, then proceed
       setTimeout(() => {
         proceedWithAnalysis();
       }, 500);
     } else {
-      // No ad ready, proceed immediately
       proceedWithAnalysis();
     }
   };
@@ -139,6 +156,7 @@ export default function StockScreen() {
         images,
         country,
         mode,
+        plan,
         strategyRules: strategyRules.trim() || undefined,
         indicators: selectedIndicators,
       });
@@ -162,6 +180,9 @@ export default function StockScreen() {
         return m;
     }
   };
+
+  const pricing = PRICING[country];
+  const maxIndicators = plan === 'Free' ? 3 : 5;
 
   return (
     <SafeAreaView
@@ -206,6 +227,74 @@ export default function StockScreen() {
             {error ? (
               <ErrorBanner message={error} onClose={() => setError('')} />
             ) : null}
+
+            {/* Plan Selection Card */}
+            <View
+              style={[
+                styles.card,
+                {
+                  backgroundColor: theme.cardBackground,
+                },
+              ]}
+            >
+              <View style={styles.cardHeader}>
+                <View style={styles.cardHeaderLeft}>
+                  <Text style={[styles.cardTitle, { color: theme.text }]}>
+                    Select Plan
+                  </Text>
+                  <Text
+                    style={[
+                      styles.cardSubtitle,
+                      { color: theme.mutedText },
+                    ]}
+                  >
+                    Choose analysis depth
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.planContainer}>
+                {PLANS.map(p => {
+                  const active = plan === p;
+                  const planPricing = pricing[p];
+                  return (
+                    <TouchableOpacity
+                      key={p}
+                      onPress={() => setPlan(p)}
+                      style={[
+                        styles.planButton,
+                        {
+                          backgroundColor: active ? theme.primary : 'transparent',
+                          borderColor: active ? theme.primary : theme.border,
+                        },
+                      ]}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          styles.planLabel,
+                          {
+                            color: active ? theme.primaryText : theme.text,
+                          },
+                        ]}
+                      >
+                        {planPricing.label}
+                      </Text>
+                      {/* <Text
+                        style={[
+                          styles.planPrice,
+                          {
+                            color: active ? theme.primaryText : theme.mutedText,
+                          },
+                        ]}
+                      >
+                        {planPricing.price}
+                      </Text> */}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
 
             {/* Configuration Card */}
             <View
@@ -396,7 +485,9 @@ export default function StockScreen() {
                       { color: theme.mutedText },
                     ]}
                   >
-                    Select up to 5 indicators
+                    {plan === 'Free' 
+                      ? 'Select up to 3 basic indicators (Free)'
+                      : 'Select up to 5 indicators'}
                   </Text>
                 </View>
                 <View
@@ -404,7 +495,7 @@ export default function StockScreen() {
                     styles.countBadge,
                     {
                       backgroundColor:
-                        selectedIndicators.length >= 5
+                        selectedIndicators.length >= maxIndicators
                           ? theme.primary
                           : theme.elevatedCard,
                     },
@@ -415,13 +506,13 @@ export default function StockScreen() {
                       styles.countBadgeText,
                       {
                         color:
-                          selectedIndicators.length >= 5
+                          selectedIndicators.length >= maxIndicators
                             ? theme.primaryText
                             : theme.mutedText,
                       },
                     ]}
                   >
-                    {selectedIndicators.length}/5
+                    {selectedIndicators.length}/{maxIndicators}
                   </Text>
                 </View>
               </View>
@@ -430,12 +521,17 @@ export default function StockScreen() {
                 {INDICATORS.map(indicator => {
                   const active = selectedIndicators.includes(indicator);
                   const disabled =
-                    !active && selectedIndicators.length >= 5;
+                    !active && selectedIndicators.length >= maxIndicators;
+                  
+                  // Free plan: only allow RSI, MACD, EMA
+                  const allowedInFree = plan === 'Free' && 
+                    !['RSI', 'MACD', 'EMA 20/50/200'].includes(indicator);
+                  
                   return (
                     <TouchableOpacity
                       key={indicator}
                       onPress={() => toggleIndicator(indicator)}
-                      disabled={disabled}
+                      disabled={disabled || allowedInFree}
                       style={[
                         styles.indicatorChip,
                         {
@@ -443,7 +539,7 @@ export default function StockScreen() {
                             ? 'rgba(108, 62, 255, 0.15)'
                             : theme.elevatedCard,
                           borderColor: active ? theme.primary : theme.border,
-                          opacity: disabled ? 0.5 : 1,
+                          opacity: (disabled || allowedInFree) ? 0.5 : 1,
                         },
                       ]}
                       activeOpacity={0.7}
@@ -459,6 +555,7 @@ export default function StockScreen() {
                         ]}
                       >
                         {indicator}
+                        {allowedInFree && ' 🔒'}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -618,7 +715,7 @@ export default function StockScreen() {
             />
           </View>
         </View>
-        {/* Banner Ad - Top */}
+        {/* Banner Ad */}
         <View style={styles.bannerContainer}>
           <BannerAd
             unitId={BANNER_AD_UNIT_ID}
@@ -673,14 +770,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     marginTop: 2,
-  },
-  notificationButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(108, 62, 255, 0.1)',
   },
   bannerContainer: {
     alignItems: 'center',
@@ -745,6 +834,31 @@ const styles = StyleSheet.create({
   countBadgeText: {
     fontSize: 13,
     fontWeight: '700',
+  },
+  // Plan selection styles
+  planContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  planButton: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 72,
+  },
+  planLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: -0.2,
+    marginBottom: 4,
+  },
+  planPrice: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   section: {
     marginBottom: 16,

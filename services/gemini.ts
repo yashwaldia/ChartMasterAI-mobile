@@ -45,8 +45,8 @@ GLOBAL MARKETS JSON FORMAT EXAMPLE:
 💰 SUBSCRIPTION & PRICING LOGIC
 You must always respect the user's subscription plan.
 
-Pricing (International - USD):
-Free: $0 | Pro: $4.99/month | Advanced: $9.99/month
+Pricing (India - INR): Free: ₹0 | Pro: ₹99/month | Advanced: ₹299/month
+Pricing (International - USD): Free: $0 | Pro: $4.99/month | Advanced: $9.99/month
 
 📶 FEATURE ACCESS BY PLAN
 
@@ -70,6 +70,9 @@ NOT Allowed:
 - Custom strategy builder results
 
 MUST show polite upgrade message at the end suggesting Pro/Advanced plans for full analysis.
+DO NOT provide buySellScore or riskScore in JSON for Free plan.
+DO NOT provide trendStrength array.
+JSON should be empty object: {}
 ` : ''}
 
 🟡 PRO PLAN
@@ -93,6 +96,9 @@ NOT Allowed:
 - Deep strategy backtest
 - Deep multi-timeframe matrix analysis
 - Hedge-fund style global macro analysis
+
+MUST provide buySellScore and riskScore in JSON.
+MUST provide trendStrength array with at least 3-4 timeframes.
 ` : ''}
 
 🔴 ADVANCED PLAN
@@ -117,6 +123,9 @@ Allowed: EVERYTHING
 - Sector Rotation & Flows
 - Commodity Check (Oil/Gold impact)
 - Institutional "Alpha" Call
+
+MUST provide buySellScore and riskScore in JSON.
+MUST provide trendStrength array with at least 4-5 timeframes.
 ` : ''}
 
 🌍 GLOBAL MARKET INTELLIGENCE MODULE
@@ -293,13 +302,14 @@ export class GeminiService {
     strategyRules?: string,
     indicators?: string[],
     mode?: 'SINGLECHART' | 'MULTICHART' | 'STRATEGYONLY',
+    plan: 'Free' | 'Pro' | 'Advanced' = 'Pro', // ✅ Added plan parameter with default
   ): Promise<{ text: string; vizData: any }> {
     try {
       if (!images || images.length === 0) {
         throw new Error('No images provided for analysis');
       }
 
-      console.log('🔄 Converting images to base64...');
+      console.log(`🔄 Converting images to base64... (Plan: ${plan})`);
       const imageParts = await Promise.all(
         images.map(async uri => {
           try {
@@ -323,24 +333,40 @@ export class GeminiService {
                       : 'Standard';
 
       const prompt = `MODE: STOCK (${modeLabel})
+PLAN: ${plan}
 COUNTRY: ${country === 'IN' ? 'India (INR)' : 'International (USD)'}
 ${strategyRules ? `STRATEGY RULES: ${strategyRules}` : ''}
 ${indicators?.length ? `FOCUS INDICATORS: ${indicators.join(', ')}` : ''}
 
 TASK:
 - Analyze the attached chart images for MULTIPLE TIMEFRAMES.
-- Provide a buySellScore (0-100) indicating overall bullish/bearish sentiment.
-- Provide a riskScore (0-100) indicating risk level.
+${plan === 'Free' ? `
+- Provide BASIC analysis only (chart type, timeframe, 3 basic indicators: RSI, MACD, EMA20).
+- DO NOT provide buySellScore, riskScore, or trendStrength.
+- Return empty JSON object: {}
+- Add polite upgrade message at the end.
+` : plan === 'Pro' ? `
+- Provide buySellScore (0-100) indicating overall bullish/bearish sentiment.
+- Provide riskScore (0-100) indicating risk level.
 - Provide trendStrength array with AT LEAST 4 timeframes (1D, 4H, 1H, 15m).
 - Each trendStrength entry must have: tf (timeframe), value (0-100), sentiment (Bullish/Bearish/Neutral).
+- Include pattern detection (name + strength only).
+- Include entry/stop loss/target suggestions (brief).
+` : `
+- Provide comprehensive ADVANCED analysis with ALL features.
+- Include pattern education, detailed entry/SL/target with R:R ratio.
+- Provide multi-timeframe EMA and RSI matrices.
+- Include institutional-grade insights.
+- Provide buySellScore and riskScore.
+- Provide trendStrength array with 5+ timeframes.
+`}
 - Produce a clear, well-structured Markdown report.
 - Use proper Markdown bold ( **like this** ) for key points only.
 - At the very end, append a single JSON object matching the STOCK MODE JSON FORMAT.
 - Do NOT wrap the JSON in backticks or markdown fences.`;
 
-      console.log('🚀 Sending request to Gemini API...');
+      console.log(`🚀 Sending request to Gemini API (${plan} plan)...`);
 
-      // For stock analysis, we default to 'Pro' plan since it has country selection
       const result = await this.model.generateContent({
         contents: [
           {
@@ -353,7 +379,7 @@ TASK:
         },
         systemInstruction: {
           role: 'system',
-          parts: [{ text: getSystemInstruction('Pro') }],
+          parts: [{ text: getSystemInstruction(plan) }], // ✅ Use plan-specific instruction
         },
       });
 

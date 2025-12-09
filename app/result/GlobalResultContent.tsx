@@ -75,9 +75,9 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
             <Text style={[styles.upgradeTitle, { color: theme.text }]}>
               Upgrade to {targetPlan}
             </Text>
-            <Text style={[styles.upgradePrice, { color: theme.primary }]}>
+            {/* <Text style={[styles.upgradePrice, { color: theme.primary }]}>
               {pricing[targetPlan]}
-            </Text>
+            </Text> */}
           </View>
         </View>
 
