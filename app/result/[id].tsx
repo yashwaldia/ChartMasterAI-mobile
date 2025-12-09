@@ -36,7 +36,8 @@ export type ActiveResult = {
   globalIndices?: Array<{ name: string; change: number; sentiment: string }>;
   analysisText: string;
   mode: 'STOCK' | 'GLOBAL';
-  country: 'IN' | 'OTHER';
+  country?: 'IN' | 'OTHER';
+  plan?: 'Free' | 'Pro' | 'Advanced';
   timestamp: string;
 };
 
@@ -90,7 +91,8 @@ export default function ResultScreen() {
         : [],
       analysisText: lastResult.text || 'No analysis available.',
       mode: lastResult.mode,
-      country: lastResult.country,
+      country: lastResult.mode === 'STOCK' ? lastResult.country : undefined,
+      plan: lastResult.mode === 'GLOBAL' ? lastResult.plan : undefined,
       timestamp: lastResult.timestamp,
     };
   };
@@ -191,7 +193,7 @@ export default function ResultScreen() {
                   : lastResult.stockMode === 'MULTICHART'
                   ? 'Multi-Timeframe'
                   : 'Strategy Analysis'
-                : 'Market Report'}
+                : `${lastResult.plan || 'Free'} Plan`}
             </Text>
           </View>
 

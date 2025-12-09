@@ -298,15 +298,6 @@ export default function AboutScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Footer Info */}
-          <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: theme.mutedText }]}>
-              © 2025 ChartMasterAI
-            </Text>
-            <Text style={[styles.footerText, { color: theme.mutedText }]}>
-              Made with ❤️ for traders
-            </Text>
-          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -359,7 +350,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 32,
   },
   heroCard: {
     borderRadius: 24,
@@ -546,14 +537,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: -0.2,
-  },
-  footer: {
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 5,
-  },
-  footerText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
+  }
 });

@@ -1,7 +1,7 @@
 // app/result/GlobalResultContent.tsx
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import { ActiveResult } from './[id]';
@@ -25,6 +25,89 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
     if (sentiment?.includes('Bullish')) return theme.success;
     if (sentiment?.includes('Bearish')) return theme.error;
     return theme.warning;
+  };
+
+  // Get plan from active result
+  const plan = active.plan || 'Free';
+
+  const UpgradeCard = ({ targetPlan }: { targetPlan: 'Pro' | 'Advanced' }) => {
+    const handleUpgrade = () => {
+      // TODO: Replace with your actual upgrade URL or navigation
+      Linking.openURL('https://yourapp.com/upgrade');
+    };
+
+    const features = {
+      Pro: [
+        'Full 10-indicator analysis',
+        'Multi-timeframe trend strength',
+        'Buy/Sell scores & Risk meter',
+        'Entry/Exit suggestions',
+        'Major news summaries',
+      ],
+      Advanced: [
+        'All Pro features',
+        'Hedge-fund style macro analysis',
+        'Sector rotation & flows',
+        'VIX & DXY correlation analysis',
+        'Institutional Alpha calls',
+        'Pattern education blocks',
+      ],
+    };
+
+    const pricing = {
+      Pro: '$4.99/month',
+      Advanced: '$9.99/month',
+    };
+
+    return (
+      <View
+        style={[
+          styles.upgradeCard,
+          {
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.primary,
+          },
+        ]}
+      >
+        <View style={styles.upgradeHeader}>
+          <Ionicons name="rocket" size={28} color={theme.primary} />
+          <View style={styles.upgradeHeaderText}>
+            <Text style={[styles.upgradeTitle, { color: theme.text }]}>
+              Upgrade to {targetPlan}
+            </Text>
+            <Text style={[styles.upgradePrice, { color: theme.primary }]}>
+              {pricing[targetPlan]}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.upgradeSubtitle, { color: theme.mutedText }]}>
+          Unlock advanced features:
+        </Text>
+
+        <View style={styles.featureList}>
+          {features[targetPlan].map((feature, idx) => (
+            <View key={idx} style={styles.featureItem}>
+              <Ionicons name="checkmark-circle" size={18} color={theme.success} />
+              <Text style={[styles.featureText, { color: theme.text }]}>
+                {feature}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          onPress={handleUpgrade}
+          style={[styles.upgradeButton, { backgroundColor: theme.primary }]}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.upgradeButtonText, { color: theme.primaryText }]}>
+            Upgrade Now
+          </Text>
+          <Ionicons name="arrow-forward" size={18} color={theme.primaryText} />
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   const RegionStrengthGrid = () => {
@@ -78,9 +161,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
               >
                 <View style={styles.regionHeader}>
                   <Ionicons name={icon as any} size={16} color={theme.mutedText} />
-                  <Text
-                    style={[styles.regionLabel, { color: theme.text }]}
-                  >
+                  <Text style={[styles.regionLabel, { color: theme.text }]}>
                     {label}
                   </Text>
                 </View>
@@ -209,9 +290,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
                 <Text style={[styles.cardTitle, { color: theme.text }]}>
                   Global Indices
                 </Text>
-                <Text
-                  style={[styles.cardSubtitle, { color: theme.mutedText }]}
-                >
+                <Text style={[styles.cardSubtitle, { color: theme.mutedText }]}>
                   Real-time market overview
                 </Text>
               </View>
@@ -228,9 +307,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
                   ]}
                 >
                   <View style={styles.indexInfo}>
-                    <Text
-                      style={[styles.indexName, { color: theme.text }]}
-                    >
+                    <Text style={[styles.indexName, { color: theme.text }]}>
                       {g.name}
                     </Text>
                     <Text
@@ -342,6 +419,12 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         </View>
       </View>
 
+      {/* Upgrade Card for Free Users */}
+      {plan === 'Free' && <UpgradeCard targetPlan="Pro" />}
+
+      {/* Upgrade Card for Pro Users */}
+      {plan === 'Pro' && <UpgradeCard targetPlan="Advanced" />}
+
       {/* Disclaimer */}
       <View
         style={[
@@ -358,9 +441,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
             size={18}
             color={theme.warning}
           />
-          <Text
-            style={[styles.disclaimerTitle, { color: theme.warning }]}
-          >
+          <Text style={[styles.disclaimerTitle, { color: theme.warning }]}>
             Educational Content Only
           </Text>
         </View>
@@ -420,57 +501,6 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 11,
     fontWeight: '500',
-  },
-
-  scoreGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 16,
-  },
-  scoreCard: {
-    flex: 1,
-    minWidth: 150,
-    borderRadius: 20,
-    padding: 18,
-  },
-  scoreHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
-  },
-  scoreLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  scoreValue: {
-    fontSize: 36,
-    fontWeight: '800',
-    letterSpacing: -1,
-    marginBottom: 12,
-  },
-  scoreBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  scoreBar: {
-    flex: 1,
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  scoreBarFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  scorePercentage: {
-    fontSize: 11,
-    fontWeight: '700',
-    minWidth: 32,
   },
 
   regionGrid: {
@@ -546,6 +576,66 @@ const styles = StyleSheet.create({
   reportContainer: {
     padding: 16,
     borderRadius: 14,
+  },
+
+  // Upgrade Card Styles
+  upgradeCard: {
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 16,
+    borderWidth: 2,
+  },
+  upgradeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  upgradeHeaderText: {
+    flex: 1,
+  },
+  upgradeTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  upgradePrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  upgradeSubtitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  featureList: {
+    gap: 10,
+    marginBottom: 20,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  featureText: {
+    fontSize: 13,
+    fontWeight: '500',
+    flex: 1,
+  },
+  upgradeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    gap: 8,
+  },
+  upgradeButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
 
   disclaimerCard: {

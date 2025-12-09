@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { geminiService } from '../services/gemini';
 
+export type Plan = 'Free' | 'Pro' | 'Advanced';
+
 export type StockResult = {
   mode: 'STOCK';
   country: 'IN' | 'OTHER';
@@ -11,16 +13,16 @@ export type StockResult = {
   images?: string[];
   stockMode?: 'SINGLECHART' | 'MULTICHART' | 'STRATEGYONLY';
   indicators?: string[];
-  timestamp: string; // ✅ Added
+  timestamp: string;
 };
 
 export type GlobalResult = {
   mode: 'GLOBAL';
-  country: 'IN' | 'OTHER';
+  plan: Plan;
   text: string;
   vizData: any;
   marketData?: string;
-  timestamp: string; // ✅ Added
+  timestamp: string;
 };
 
 type AnalysisContextType = {
@@ -36,7 +38,7 @@ type AnalysisContextType = {
   }) => Promise<{ id: undefined } & StockResult>;
   analyzeGlobal: (params: {
     marketData: string;
-    country: 'IN' | 'OTHER';
+    plan: Plan;
   }) => Promise<{ id: undefined } & GlobalResult>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   clearResult: () => void;
@@ -44,7 +46,6 @@ type AnalysisContextType = {
 
 const AnalysisContext = createContext<AnalysisContextType | null>(null);
 
-// Provider component - wrap your app with this
 export function AnalysisProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -76,7 +77,7 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
         images: params.images,
         stockMode: params.mode,
         indicators: params.indicators,
-        timestamp: new Date().toLocaleString('en-US', { // ✅ Added
+        timestamp: new Date().toLocaleString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -97,23 +98,23 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
 
   const analyzeGlobal = async (params: {
     marketData: string;
-    country: 'IN' | 'OTHER';
+    plan: Plan;
   }) => {
     setLoading(true);
     setError('');
     try {
       const { text, vizData } = await geminiService.analyzeGlobalMarkets(
         params.marketData,
-        params.country,
+        params.plan,
       );
 
       const result: GlobalResult = {
         mode: 'GLOBAL',
-        country: params.country,
+        plan: params.plan,
         text,
         vizData,
         marketData: params.marketData,
-        timestamp: new Date().toLocaleString('en-US', { // ✅ Added
+        timestamp: new Date().toLocaleString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -153,7 +154,6 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook to use the context
 export const useAnalysis = (): AnalysisContextType => {
   const context = useContext(AnalysisContext);
   if (!context) {

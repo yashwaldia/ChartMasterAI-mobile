@@ -1,8 +1,9 @@
 // services/gemini.ts
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// System instruction for Gemini
-const SYSTEM_INSTRUCTION = `You are the AI engine of a mobile app called AI Stock Analyzer. Your job is to analyze stock chart images or extracted market data and return a clean, structured trading analysis.
+// Plan-based System Instruction (matches website logic)
+const getSystemInstruction = (plan: 'Free' | 'Pro' | 'Advanced') => {
+  return `You are the AI engine of a mobile app called AI Stock Analyzer. Your job is to analyze stock chart images or extracted market data and return a clean, structured trading analysis.
 
 STRICT OUTPUT CONTRACT:
 
@@ -41,17 +42,129 @@ GLOBAL MARKETS JSON FORMAT EXAMPLE:
   ]
 }
 
+💰 SUBSCRIPTION & PRICING LOGIC
+You must always respect the user's subscription plan.
+
+Pricing (International - USD):
+Free: $0 | Pro: $4.99/month | Advanced: $9.99/month
+
+📶 FEATURE ACCESS BY PLAN
+
+🟢 FREE PLAN
+${plan === 'Free' ? `
+You are currently in FREE PLAN mode.
+
+Allowed:
+- Chart basics (Type, Timeframe)
+- Short trend comment
+- 3 Basic Indicators: RSI (Simple state: Overbought/Oversold/Neutral), MACD (Bullish/Bearish), EMA20 (Above/Below)
+
+NOT Allowed:
+- Multi-timeframe trend table
+- Full 10 indicators
+- Patterns
+- Buy/Sell Score
+- Risk Meter
+- Entry/SL/Target
+- Multi-chart comparison
+- Custom strategy builder results
+
+MUST show polite upgrade message at the end suggesting Pro/Advanced plans for full analysis.
+` : ''}
+
+🟡 PRO PLAN
+${plan === 'Pro' ? `
+You are currently in PRO PLAN mode.
+
+Allowed:
+- Full detected chart details
+- Multi-timeframe trend strength (5m, 15m, 1H, 1D, 1W)
+- Full 10-indicator analysis (RSI, MACD, EMAs, SMA, BB, Vol, ATR, Stoch, S/R, Z-score)
+- Pattern detection (Name + Strength only)
+- Buy/Sell score (0–100)
+- Risk meter (0–100)
+- Entry, Stop Loss, Target suggestion (Brief)
+- Simple explanation for beginners
+
+NOT Allowed:
+- Pattern start/end dates
+- Pattern education / "ideal pattern" learning section
+- Multi-chart comparison table
+- Deep strategy backtest
+- Deep multi-timeframe matrix analysis
+- Hedge-fund style global macro analysis
+` : ''}
+
+🔴 ADVANCED PLAN
+${plan === 'Advanced' ? `
+You are currently in ADVANCED PLAN mode.
+
+Allowed: EVERYTHING
+- All Pro features
+- Pattern details (Start/End dates, Risk level)
+- Pattern Education Block (Meaning, Formation, Buyer/Seller psychology, Ideal version, Entry/Exit)
+- Detailed Entry – Stop Loss – Target Suggestion (with R:R ratio)
+- Buy/Sell Score (0-100) & Risk Meter (0-100)
+- Simple Explanation (Beginner-Friendly)
+- Multi-Chart Comparison (only if MULTI_CHART mode)
+- Custom Strategy Result
+- Advanced Multi-Timeframe Indicator Deep Analysis
+- Multi-Timeframe EMA Matrix (9 / 21 / 50 / 100 / 200)
+- Multi-Timeframe RSI Matrix (7 / 14 / 21)
+- Structure & Stochastic View
+- Hedge-fund style global macro analysis (for GLOBAL mode)
+- Macro-Correlation Analysis (US 10Y Yields, DXY, VIX)
+- Sector Rotation & Flows
+- Commodity Check (Oil/Gold impact)
+- Institutional "Alpha" Call
+` : ''}
+
+🌍 GLOBAL MARKET INTELLIGENCE MODULE
+
+${plan === 'Free' ? `
+For FREE users in GLOBAL mode:
+- Basic index overview (3-4 major indices only)
+- Simple sentiment (Bullish/Bearish/Neutral)
+- Regional strength scores
+- NO macro analysis, NO sector rotation, NO deep insights
+- Show upgrade message for Pro/Advanced features
+` : ''}
+
+${plan === 'Pro' ? `
+For PRO users in GLOBAL mode:
+1. **Global Index Performance**: Summarize key indices (NIFTY, SENSEX, DOW, NASDAQ, FTSE, DAX, NIKKEI)
+2. **Major News Summary**: Summarize key headlines provided in input
+3. **Regional Strength**: Provide US, India, Europe, Asia scores
+4. **Basic Sentiment**: Bullish/Bearish/Neutral with brief reasoning
+` : ''}
+
+${plan === 'Advanced' ? `
+For ADVANCED users in GLOBAL mode:
+Perform all Pro tasks, PLUS:
+1. **Macro-Correlation Analysis**:
+   - Analyze impact of US 10Y Yields & DXY (Dollar Index) on equities
+   - Analyze VIX (Fear Index) levels
+2. **Sector Rotation & Flows**:
+   - Identify if money is moving to Defensive (Gold, Utilities) or Cyclical (Tech, Finance)
+3. **Commodity Check**:
+   - Impact of Oil/Gold prices on inflation and market sentiment
+4. **Institutional "Alpha" Call**:
+   - A distinct section identifying the biggest risk vs reward opportunity in current global setup
+` : ''}
+
 ANALYSIS DEPTH:
-- Provide deep, structured analysis with clear sections and detailed explanations.
-- Cover MULTIPLE timeframes (1D, 4H, 1H, 15m, 5m) and comprehensive technical analysis.
-- Include risk assessment and actionable trading insights.
-- ALWAYS provide buySellScore (0-100) and riskScore (0-100).
-- ALWAYS provide trendStrength array with AT LEAST 3-4 timeframes.
+- Provide analysis appropriate to the user's plan level
+- For Free: Keep it basic and encourage upgrade
+- For Pro: Comprehensive technical analysis with scores
+- For Advanced: Maximum depth with institutional-grade insights
+- ALWAYS provide buySellScore (0-100) and riskScore (0-100) for Pro/Advanced
+- ALWAYS provide trendStrength array with AT LEAST 3-4 timeframes for Pro/Advanced
 
 GUARDRAILS:
-- All content is for education and research only.
-- Do NOT give financial, trading, or investment advice.
-- Do NOT say "you should buy/sell"; instead, describe conditions and risks.`;
+- All content is for education and research only
+- Do NOT give financial, trading, or investment advice
+- Do NOT say "you should buy/sell"; instead, describe conditions and risks`;
+};
 
 // ---------- Helpers ----------
 
@@ -169,9 +282,6 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    
-    // ✅ CORRECT: Use gemini-2.5-flash (stable, released June 2025)
-    // Alternative: 'gemini-2.0-flash' also works
     this.model = this.genAI.getGenerativeModel({ 
       model: 'gemini-2.5-flash'
     });
@@ -230,6 +340,7 @@ TASK:
 
       console.log('🚀 Sending request to Gemini API...');
 
+      // For stock analysis, we default to 'Pro' plan since it has country selection
       const result = await this.model.generateContent({
         contents: [
           {
@@ -242,7 +353,7 @@ TASK:
         },
         systemInstruction: {
           role: 'system',
-          parts: [{ text: SYSTEM_INSTRUCTION }],
+          parts: [{ text: getSystemInstruction('Pro') }],
         },
       });
 
@@ -283,7 +394,7 @@ TASK:
 
   async analyzeGlobalMarkets(
     marketData: string,
-    country: string,
+    plan: 'Free' | 'Pro' | 'Advanced',
   ): Promise<{ text: string; vizData: any }> {
     try {
       if (!marketData || marketData.trim().length === 0) {
@@ -291,7 +402,7 @@ TASK:
       }
 
       const prompt = `MODE: GLOBAL MARKETS
-COUNTRY: ${country === 'IN' ? 'India (INR)' : 'International (USD)'}
+PLAN: ${plan}
 
 MARKET DATA INPUT:
 ${marketData}
@@ -302,10 +413,11 @@ TASK:
 - Provide regionalStrength object with scores for US, India, Europe, Asia (0-100 each).
 - Provide globalIndices array with at least 4-5 major indices showing name, change (%), and sentiment.
 - Use proper Markdown headings, lists, and bold ( **like this** ) where needed.
+- Respect the ${plan} plan limitations as defined in the system instruction.
 - At the very end, append a single JSON object matching the GLOBAL MARKETS JSON FORMAT.
 - Do NOT wrap the JSON in backticks or markdown fences. No commentary after the JSON.`;
 
-      console.log('🚀 Sending global markets request to Gemini API...');
+      console.log(`🚀 Sending global markets request to Gemini API (${plan} plan)...`);
 
       const result = await this.model.generateContent({
         contents: [
@@ -319,7 +431,7 @@ TASK:
         },
         systemInstruction: {
           role: 'system',
-          parts: [{ text: SYSTEM_INSTRUCTION }],
+          parts: [{ text: getSystemInstruction(plan) }],
         },
       });
 
