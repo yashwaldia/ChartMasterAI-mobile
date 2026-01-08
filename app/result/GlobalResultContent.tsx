@@ -1,5 +1,4 @@
 // app/result/GlobalResultContent.tsx
-
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,13 +26,11 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
     return theme.warning;
   };
 
-  // Get plan from active result
   const plan = active.plan || 'Free';
 
   const UpgradeCard = ({ targetPlan }: { targetPlan: 'Pro' | 'Advanced' }) => {
     const handleUpgrade = () => {
-      // TODO: Replace with your actual upgrade URL or navigation
-      Linking.openURL('https://yourapp.com/upgrade');
+      Linking.openURL('https://chartmasterai.com/upgrade');
     };
 
     const features = {
@@ -70,14 +67,11 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         ]}
       >
         <View style={styles.upgradeHeader}>
-          <Ionicons name="rocket" size={28} color={theme.primary} />
+          <Ionicons name="rocket" size={32} color={theme.primary} />
           <View style={styles.upgradeHeaderText}>
             <Text style={[styles.upgradeTitle, { color: theme.text }]}>
               Upgrade to {targetPlan}
             </Text>
-            {/* <Text style={[styles.upgradePrice, { color: theme.primary }]}>
-              {pricing[targetPlan]}
-            </Text> */}
           </View>
         </View>
 
@@ -88,7 +82,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         <View style={styles.featureList}>
           {features[targetPlan].map((feature, idx) => (
             <View key={idx} style={styles.featureItem}>
-              <Ionicons name="checkmark-circle" size={18} color={theme.success} />
+              <Ionicons name="checkmark-circle" size={20} color={theme.success} />
               <Text style={[styles.featureText, { color: theme.text }]}>
                 {feature}
               </Text>
@@ -99,12 +93,12 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         <TouchableOpacity
           onPress={handleUpgrade}
           style={[styles.upgradeButton, { backgroundColor: theme.primary }]}
-          activeOpacity={0.8}
+          activeOpacity={0.6}
         >
           <Text style={[styles.upgradeButtonText, { color: theme.primaryText }]}>
             Upgrade Now
           </Text>
-          <Ionicons name="arrow-forward" size={18} color={theme.primaryText} />
+          <Ionicons name="arrow-forward" size={20} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
     );
@@ -160,7 +154,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
                 ]}
               >
                 <View style={styles.regionHeader}>
-                  <Ionicons name={icon as any} size={16} color={theme.mutedText} />
+                  <Ionicons name={icon as any} size={18} color={theme.mutedText} />
                   <Text style={[styles.regionLabel, { color: theme.text }]}>
                     {label}
                   </Text>
@@ -201,7 +195,6 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
 
   return (
     <>
-      {/* Global Risk Circular Score */}
       {active.globalRiskScore != null && (
         <View
           style={[
@@ -220,7 +213,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
                 Overall market risk environment
               </Text>
             </View>
-            <Ionicons name="globe-outline" size={22} color={theme.primary} />
+            <Ionicons name="globe-outline" size={24} color={theme.primary} />
           </View>
 
           <View style={styles.globalTopRow}>
@@ -231,7 +224,6 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
               color={getScoreColor(active.globalRiskScore, 'global')}
             />
 
-            {/* Optional legend text */}
             <View style={styles.globalLegend}>
               <View style={styles.legendRow}>
                 <View
@@ -271,10 +263,8 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         </View>
       )}
 
-      {/* Regional Strength */}
       <RegionStrengthGrid />
 
-      {/* Global Indices */}
       {Array.isArray(active.globalIndices) &&
         active.globalIndices.length > 0 && (
           <View
@@ -339,7 +329,6 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
           </View>
         )}
 
-      {/* Analysis Report */}
       <View
         style={[
           styles.card,
@@ -370,44 +359,44 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
             style={{
               body: {
                 color: theme.mutedText,
-                fontSize: 13,
-                lineHeight: 20,
+                fontSize: 14,
+                lineHeight: 21,
               },
               heading1: {
                 color: theme.text,
                 fontSize: 20,
                 fontWeight: '700',
-                marginBottom: 8,
+                marginBottom: 10,
               },
               heading2: {
                 color: theme.text,
                 fontSize: 18,
                 fontWeight: '700',
-                marginBottom: 6,
-                marginTop: 8,
+                marginBottom: 8,
+                marginTop: 10,
               },
               heading3: {
                 color: theme.text,
                 fontSize: 16,
                 fontWeight: '700',
-                marginBottom: 4,
-                marginTop: 8,
+                marginBottom: 6,
+                marginTop: 10,
               },
               bullet_list: {
-                marginTop: 4,
-                marginBottom: 4,
+                marginTop: 6,
+                marginBottom: 6,
               },
               list_item: {
                 flexDirection: 'row',
-                marginBottom: 2,
+                marginBottom: 4,
               },
               strong: {
                 color: theme.text,
                 fontWeight: '700',
               },
               paragraph: {
-                marginTop: 2,
-                marginBottom: 6,
+                marginTop: 4,
+                marginBottom: 8,
               },
               code_block: {
                 display: 'none',
@@ -419,13 +408,10 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         </View>
       </View>
 
-      {/* Upgrade Card for Free Users */}
       {plan === 'Free' && <UpgradeCard targetPlan="Pro" />}
 
-      {/* Upgrade Card for Pro Users */}
       {plan === 'Pro' && <UpgradeCard targetPlan="Advanced" />}
 
-      {/* Disclaimer */}
       <View
         style={[
           styles.disclaimerCard,
@@ -438,7 +424,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         <View style={styles.disclaimerHeader}>
           <Ionicons
             name="alert-circle-outline"
-            size={18}
+            size={20}
             color={theme.warning}
           />
           <Text style={[styles.disclaimerTitle, { color: theme.warning }]}>
@@ -457,7 +443,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 16,
   },
@@ -465,33 +451,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
     marginBottom: 4,
   },
   cardSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
   },
 
-  // Global risk top row
   globalTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 20,
   },
   globalLegend: {
     flex: 1,
-    gap: 6,
+    gap: 10,
   },
   legendRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   legendDot: {
     width: 10,
@@ -499,8 +484,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   legendText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '500',
+    lineHeight: 18,
   },
 
   regionGrid: {
@@ -510,25 +496,26 @@ const styles = StyleSheet.create({
   },
   regionItem: {
     flex: 1,
-    minWidth: 90,
-    borderRadius: 14,
-    padding: 14,
+    minWidth: 95,
+    borderRadius: 16,
+    padding: 16,
   },
   regionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
+    gap: 8,
+    marginBottom: 8,
   },
   regionLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+    letterSpacing: -0.1,
   },
   regionValue: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 6,
+    letterSpacing: -0.7,
+    marginBottom: 8,
   },
   regionBarContainer: {
     height: 6,
@@ -544,43 +531,43 @@ const styles = StyleSheet.create({
   },
 
   indicesList: {
-    gap: 10,
+    gap: 12,
   },
   indexItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 14,
-    borderRadius: 14,
+    padding: 16,
+    borderRadius: 16,
   },
   indexInfo: {
     flex: 1,
   },
   indexName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
-    marginBottom: 2,
+    marginBottom: 4,
+    letterSpacing: -0.2,
   },
   indexSentiment: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
   },
   indexChange: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '800',
     letterSpacing: -0.5,
-    minWidth: 60,
+    minWidth: 70,
     textAlign: 'right',
   },
 
   reportContainer: {
-    padding: 16,
-    borderRadius: 14,
+    padding: 18,
+    borderRadius: 16,
   },
 
-  // Upgrade Card Styles
   upgradeCard: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 24,
     marginBottom: 16,
     borderWidth: 2,
@@ -588,16 +575,16 @@ const styles = StyleSheet.create({
   upgradeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
+    gap: 16,
+    marginBottom: 16,
   },
   upgradeHeaderText: {
     flex: 1,
   },
   upgradeTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    letterSpacing: -0.3,
+    letterSpacing: -0.5,
   },
   upgradePrice: {
     fontSize: 14,
@@ -605,58 +592,61 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   upgradeSubtitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 12,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 16,
   },
   featureList: {
-    gap: 10,
+    gap: 12,
     marginBottom: 20,
   },
   featureItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    alignItems: 'flex-start',
+    gap: 12,
   },
   featureText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
     flex: 1,
+    lineHeight: 20,
   },
   upgradeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     borderRadius: 16,
-    gap: 8,
+    gap: 10,
+    minHeight: 56,
   },
   upgradeButtonText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
 
   disclaimerCard: {
     borderRadius: 16,
-    padding: 16,
+    padding: 18,
     borderLeftWidth: 4,
     marginBottom: 16,
   },
   disclaimerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 10,
   },
   disclaimerTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
+    letterSpacing: -0.2,
   },
   disclaimerText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
-    lineHeight: 18,
+    lineHeight: 20,
   },
 });

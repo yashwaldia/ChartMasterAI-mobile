@@ -1,31 +1,31 @@
 // Colors.ts
 
-// Core brand colors - Purple-themed trading app aesthetic
-const deepNavy = '#0A0B1A';      // main app background (darkest)
-const darkNavy = '#1A1B2E';      // card backgrounds
-const cardNavy = '#252638';      // elevated cards
-const headerNavy = '#1E1F30';    // headers / tab bar
+// Core brand colors - Purple-themed trading app aesthetic (2026 Modern Update)
+const deepNavy = '#121218';      // main app background (softer grey, not pure black)
+const darkNavy = '#1C1C24';      // card backgrounds (improved elevation)
+const cardNavy = '#252530';      // elevated cards (better contrast)
+const headerNavy = '#1C1C24';    // headers / tab bar (matches card layer)
 
-// Purple gradient system (primary brand color)
-const purple500 = '#6C3EFF';     // main purple
-const purple600 = '#5A2FE6';     // darker purple
-const purple400 = '#8B5CFF';     // lighter purple
-const purpleGlow = '#7B4AFF';    // glow/hover state
+// Purple gradient system (primary brand color) - Desaturated for better accessibility
+const purple500 = '#7C5CFF';     // main purple (15% less saturated)
+const purple600 = '#6B4FE8';     // darker purple (smoother gradient)
+const purple400 = '#8B6FFF';     // lighter purple (refined)
+const purpleGlow = '#8B6FFF';    // glow/hover state (matches lighter variant)
 
-// Status colors
-const successGreen = '#00FF88';  // bright lime green for positive
-const errorRed = '#FF3366';      // vibrant red for negative
-const warningOrange = '#FF9500'; // orange for warnings
+// Status colors - Improved contrast and accessibility
+const successGreen = '#00E676';  // Material Design green (better legibility)
+const errorRed = '#FF5252';      // softer red (less aggressive)
+const warningOrange = '#FFB74D'; // warmer orange (more approachable)
 
-// Neutrals
+// Neutrals - Enhanced text hierarchy
 const white = '#FFFFFF';
-const offWhite = '#F8F9FA';
+const offWhite = '#FAFAFA';      // softer white (reduced eye strain)
 const gray100 = '#E5E7EB';
 const gray300 = '#D1D5DB';
 const gray400 = '#9CA3AF';
-const gray500 = '#8F92A1';
-const gray600 = '#6B7280';
-const gray700 = '#4B5563';
+const gray500 = '#B8B8C0';       // improved secondary text contrast
+const gray600 = '#6E6E78';       // better tertiary text
+const gray700 = '#4A4A54';       // disabled state
 
 const tintColorLight = purple500;
 const tintColorDark = purple400;
@@ -68,15 +68,15 @@ export default {
   },
 
   dark: {
-    // Main purple-themed dark mode
-    text: offWhite,
-    background: deepNavy,           // main screen background
-    cardBackground: darkNavy,       // card backgrounds
-    elevatedCard: cardNavy,         // elevated/interactive cards
+    // Main purple-themed dark mode (2026 Enhanced)
+    text: offWhite,                 // softer white for reduced eye strain
+    background: deepNavy,           // main screen background (no pure black)
+    cardBackground: darkNavy,       // card backgrounds (improved elevation)
+    elevatedCard: cardNavy,         // elevated/interactive cards (clear hierarchy)
     headerBackground: headerNavy,   // headers / top bars
-    border: '#2A2B3E',              // subtle borders
+    border: '#2E2E3A',              // subtle borders (slightly lighter)
 
-    primary: purple500,             // main purple brand
+    primary: purple500,             // main purple brand (desaturated)
     primaryVariant: purple600,      
     primaryText: white,
     primaryGradientStart: purple400, // for gradient buttons
@@ -87,12 +87,12 @@ export default {
 
     accent: purpleGlow,             // hover/active states
 
-    mutedText: gray500,             // secondary text
-    labelText: gray400,             // labels/captions
+    mutedText: gray500,             // secondary text (improved contrast)
+    labelText: gray600,             // labels/captions (tertiary text)
 
-    success: successGreen,          // bright green
-    error: errorRed,                // vibrant red
-    warning: warningOrange,
+    success: successGreen,          // Material Design green
+    error: errorRed,                // softer red
+    warning: warningOrange,         // warmer orange
     info: purple400,
 
     // Tab bar + icons
@@ -102,8 +102,8 @@ export default {
     tabBarBackground: darkNavy,
 
     // Input fields
-    inputBackground: '#0F1019',    // darker input bg
-    inputBorder: '#2A2B3E',
+    inputBackground: '#16161C',    // slightly lighter for better visibility
+    inputBorder: '#2E2E3A',
     inputFocusBorder: purple500,
 
     // Chips/Pills

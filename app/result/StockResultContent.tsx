@@ -20,7 +20,6 @@ export default function StockResultContent({ active }: StockResultContentProps) 
       if (score >= 40) return theme.warning;
       return theme.error;
     }
-    // risk
     if (score >= 70) return theme.error;
     if (score >= 40) return theme.warning;
     return theme.success;
@@ -32,13 +31,11 @@ export default function StockResultContent({ active }: StockResultContentProps) 
     return theme.warning;
   };
 
-  // Get plan from active result
   const plan = active.plan || 'Free';
   const country = active.country || 'OTHER';
 
   const UpgradeCard = ({ targetPlan }: { targetPlan: 'Pro' | 'Advanced' }) => {
     const handleUpgrade = () => {
-      // TODO: Replace with your actual upgrade URL or navigation
       Linking.openURL('https://chartmasterai.com/upgrade');
     };
 
@@ -85,14 +82,11 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         ]}
       >
         <View style={styles.upgradeHeader}>
-          <Ionicons name="trending-up" size={28} color={theme.primary} />
+          <Ionicons name="trending-up" size={32} color={theme.primary} />
           <View style={styles.upgradeHeaderText}>
             <Text style={[styles.upgradeTitle, { color: theme.text }]}>
               Upgrade to {targetPlan}
             </Text>
-            {/* <Text style={[styles.upgradePrice, { color: theme.primary }]}>
-              {pricing[country][targetPlan]}
-            </Text> */}
           </View>
         </View>
 
@@ -103,7 +97,7 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         <View style={styles.featureList}>
           {features[targetPlan].map((feature, idx) => (
             <View key={idx} style={styles.featureItem}>
-              <Ionicons name="checkmark-circle" size={18} color={theme.success} />
+              <Ionicons name="checkmark-circle" size={20} color={theme.success} />
               <Text style={[styles.featureText, { color: theme.text }]}>
                 {feature}
               </Text>
@@ -114,12 +108,12 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         <TouchableOpacity
           onPress={handleUpgrade}
           style={[styles.upgradeButton, { backgroundColor: theme.primary }]}
-          activeOpacity={0.8}
+          activeOpacity={0.6}
         >
           <Text style={[styles.upgradeButtonText, { color: theme.primaryText }]}>
             Upgrade Now
           </Text>
-          <Ionicons name="arrow-forward" size={18} color={theme.primaryText} />
+          <Ionicons name="arrow-forward" size={20} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
     );
@@ -127,7 +121,6 @@ export default function StockResultContent({ active }: StockResultContentProps) 
 
   return (
     <>
-      {/* Score + Trend Row (like website header card) */}
       {(active.buySellScore != null ||
         active.riskScore != null ||
         (Array.isArray(active.trendStrength) &&
@@ -149,11 +142,10 @@ export default function StockResultContent({ active }: StockResultContentProps) 
                 Multi-timeframe technical view
               </Text>
             </View>
-            <Ionicons name="stats-chart" size={22} color={theme.primary} />
+            <Ionicons name="stats-chart" size={24} color={theme.primary} />
           </View>
 
           <View style={styles.topRow}>
-            {/* Circular Scores */}
             <View style={styles.scoresColumn}>
               {active.buySellScore != null && (
                 <CircularScore
@@ -174,7 +166,6 @@ export default function StockResultContent({ active }: StockResultContentProps) 
               )}
             </View>
 
-            {/* Trend Strength Block */}
             {Array.isArray(active.trendStrength) &&
               active.trendStrength.length > 0 && (
                 <View style={styles.trendBlock}>
@@ -242,7 +233,6 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         </View>
       )}
 
-      {/* Analysis Report */}
       <View
         style={[
           styles.card,
@@ -271,14 +261,14 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         >
           <Markdown
             style={{
-              body: { color: theme.mutedText, fontSize: 13, lineHeight: 20 },
-              heading1: { color: theme.text, fontSize: 20, fontWeight: '700', marginBottom: 8 },
-              heading2: { color: theme.text, fontSize: 18, fontWeight: '700', marginBottom: 6, marginTop: 8 },
-              heading3: { color: theme.text, fontSize: 16, fontWeight: '700', marginBottom: 4, marginTop: 8 },
-              bullet_list: { marginTop: 4, marginBottom: 4 },
-              list_item: { flexDirection: 'row', marginBottom: 2 },
+              body: { color: theme.mutedText, fontSize: 14, lineHeight: 21 },
+              heading1: { color: theme.text, fontSize: 20, fontWeight: '700', marginBottom: 10 },
+              heading2: { color: theme.text, fontSize: 18, fontWeight: '700', marginBottom: 8, marginTop: 10 },
+              heading3: { color: theme.text, fontSize: 16, fontWeight: '700', marginBottom: 6, marginTop: 10 },
+              bullet_list: { marginTop: 6, marginBottom: 6 },
+              list_item: { flexDirection: 'row', marginBottom: 4 },
               strong: { color: theme.text, fontWeight: '700' },
-              paragraph: { marginTop: 2, marginBottom: 6 },
+              paragraph: { marginTop: 4, marginBottom: 8 },
               code_block: {
                 display: 'none',
               },
@@ -289,13 +279,10 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         </View>
       </View>
 
-      {/* Upgrade Card for Free Users */}
       {plan === 'Free' && <UpgradeCard targetPlan="Pro" />}
 
-      {/* Upgrade Card for Pro Users */}
       {plan === 'Pro' && <UpgradeCard targetPlan="Advanced" />}
 
-      {/* Disclaimer */}
       <View
         style={[
           styles.disclaimerCard,
@@ -308,7 +295,7 @@ export default function StockResultContent({ active }: StockResultContentProps) 
         <View style={styles.disclaimerHeader}>
           <Ionicons
             name="alert-circle-outline"
-            size={18}
+            size={20}
             color={theme.warning}
           />
           <Text
@@ -329,7 +316,7 @@ export default function StockResultContent({ active }: StockResultContentProps) 
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 16,
   },
@@ -337,58 +324,58 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
     marginBottom: 4,
   },
   cardSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
   },
 
-  /* Top row: circles + trend */
   topRow: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 20,
   },
   scoresColumn: {
     flexDirection: 'column',
-    gap: 14,
+    gap: 16,
   },
   trendBlock: {
     flex: 1,
-    marginLeft: 8,
+    marginLeft: 4,
   },
   trendBlockHeader: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   trendBlockTitle: {
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    marginBottom: 2,
   },
   trendBlockSubtitle: {
     fontSize: 11,
     fontWeight: '500',
   },
   trendList: {
-    gap: 10,
+    gap: 12,
   },
   trendRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   trendTf: {
-    width: 40,
+    width: 42,
     fontSize: 13,
     fontWeight: '700',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   trendBarTrack: {
     flex: 1,
@@ -401,97 +388,98 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   trendSentiment: {
-    minWidth: 70,
+    minWidth: 74,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'right',
+    letterSpacing: -0.1,
   },
 
   reportContainer: {
-    padding: 16,
-    borderRadius: 14,
+    padding: 18,
+    borderRadius: 16,
   },
 
-  // Upgrade Card Styles
   upgradeCard: {
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 24,
+    padding: 24,
     marginBottom: 16,
     borderWidth: 2,
   },
   upgradeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
+    gap: 16,
+    marginBottom: 16,
   },
   upgradeHeaderText: {
     flex: 1,
   },
   upgradeTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    letterSpacing: -0.3,
-    marginBottom: 4,
+    letterSpacing: -0.5,
   },
   upgradePrice: {
     fontSize: 14,
     fontWeight: '700',
   },
   upgradeSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    marginBottom: 14,
+    marginBottom: 16,
   },
   featureList: {
-    gap: 10,
-    marginBottom: 16,
+    gap: 12,
+    marginBottom: 20,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
+    gap: 12,
   },
   featureText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   upgradeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 14,
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    minHeight: 56,
   },
   upgradeButtonText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
 
   disclaimerCard: {
     borderRadius: 16,
-    padding: 16,
+    padding: 18,
     borderLeftWidth: 4,
     marginBottom: 16,
   },
   disclaimerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 10,
   },
   disclaimerTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
+    letterSpacing: -0.2,
   },
   disclaimerText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
-    lineHeight: 18,
+    lineHeight: 20,
   },
 });

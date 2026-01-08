@@ -44,7 +44,6 @@ type Mode = (typeof MODES)[number];
 type Country = (typeof COUNTRIES)[number];
 type Plan = (typeof PLANS)[number];
 
-// Pricing based on country
 const PRICING = {
   IN: {
     Free: { price: '₹0', label: 'Free' },
@@ -58,7 +57,6 @@ const PRICING = {
   },
 };
 
-// Ad Unit IDs
 const BANNER_AD_UNIT_ID = __DEV__
   ? TestIds.BANNER
   : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID_STOCK || '';
@@ -82,7 +80,6 @@ export default function StockScreen() {
   const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(null);
   const [interstitialLoaded, setInterstitialLoaded] = useState(false);
 
-  // Initialize AdMob
   useEffect(() => {
     mobileAds()
       .initialize()
@@ -91,7 +88,6 @@ export default function StockScreen() {
       });
   }, []);
 
-  // Load interstitial ad
   useEffect(() => {
     const ad = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_UNIT_ID, {
       requestNonPersonalizedAdsOnly: true,
@@ -116,7 +112,6 @@ export default function StockScreen() {
   }, []);
 
   const toggleIndicator = (indicator: string) => {
-    // Free plan: max 3 indicators (RSI, MACD, EMA only)
     const maxIndicators = plan === 'Free' ? 3 : 5;
     
     setSelectedIndicators(prev =>
@@ -139,7 +134,6 @@ export default function StockScreen() {
 
     setError('');
 
-    // Show interstitial ad before analysis
     if (interstitialLoaded && interstitialAd) {
       interstitialAd.show();
       setTimeout(() => {
@@ -190,7 +184,6 @@ export default function StockScreen() {
       edges={['top', 'left', 'right']}
     >
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-        {/* Header */}
         <View
           style={[
             styles.header,
@@ -218,7 +211,6 @@ export default function StockScreen() {
           </View>
         </View>
 
-        {/* Main Content */}
         <View style={styles.main}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -228,7 +220,6 @@ export default function StockScreen() {
               <ErrorBanner message={error} onClose={() => setError('')} />
             ) : null}
 
-            {/* Plan Selection Card */}
             <View
               style={[
                 styles.card,
@@ -268,7 +259,7 @@ export default function StockScreen() {
                           borderColor: active ? theme.primary : theme.border,
                         },
                       ]}
-                      activeOpacity={0.7}
+                      activeOpacity={0.6}
                     >
                       <Text
                         style={[
@@ -280,23 +271,12 @@ export default function StockScreen() {
                       >
                         {planPricing.label}
                       </Text>
-                      {/* <Text
-                        style={[
-                          styles.planPrice,
-                          {
-                            color: active ? theme.primaryText : theme.mutedText,
-                          },
-                        ]}
-                      >
-                        {planPricing.price}
-                      </Text> */}
                     </TouchableOpacity>
                   );
                 })}
               </View>
             </View>
 
-            {/* Configuration Card */}
             <View
               style={[
                 styles.card,
@@ -316,9 +296,8 @@ export default function StockScreen() {
                 />
               </View>
 
-              {/* Analysis Mode */}
               <View style={styles.section}>
-                <Text style={[styles.sectionLabel, { color: theme.mutedText }]}>
+                <Text style={[styles.sectionLabel, { color: theme.labelText }]}>
                   Analysis Mode
                 </Text>
                 <View style={styles.modeToggleContainer}>
@@ -337,7 +316,7 @@ export default function StockScreen() {
                             borderColor: active ? theme.primary : theme.border,
                           },
                         ]}
-                        activeOpacity={0.7}
+                        activeOpacity={0.6}
                       >
                         <Text
                           style={[
@@ -357,9 +336,8 @@ export default function StockScreen() {
                 </View>
               </View>
 
-              {/* Region Selection */}
               <View style={styles.section}>
-                <Text style={[styles.sectionLabel, { color: theme.mutedText }]}>
+                <Text style={[styles.sectionLabel, { color: theme.labelText }]}>
                   Region
                 </Text>
                 <View style={styles.regionToggleContainer}>
@@ -378,7 +356,7 @@ export default function StockScreen() {
                             borderColor: active ? theme.primary : theme.border,
                           },
                         ]}
-                        activeOpacity={0.7}
+                        activeOpacity={0.6}
                       >
                         <Text
                           style={[
@@ -402,7 +380,6 @@ export default function StockScreen() {
               </View>
             </View>
 
-            {/* Strategy Input (Conditional) */}
             {mode === 'STRATEGYONLY' && (
               <View
                 style={[
@@ -457,7 +434,7 @@ export default function StockScreen() {
 
                 <View style={styles.inputFooter}>
                   <Text
-                    style={[styles.charCount, { color: theme.mutedText }]}
+                    style={[styles.charCount, { color: theme.labelText }]}
                   >
                     {strategyRules.length}/1000
                   </Text>
@@ -465,7 +442,6 @@ export default function StockScreen() {
               </View>
             )}
 
-            {/* Indicators Card */}
             <View
               style={[
                 styles.card,
@@ -523,7 +499,6 @@ export default function StockScreen() {
                   const disabled =
                     !active && selectedIndicators.length >= maxIndicators;
                   
-                  // Free plan: only allow RSI, MACD, EMA
                   const allowedInFree = plan === 'Free' && 
                     !['RSI', 'MACD', 'EMA 20/50/200'].includes(indicator);
                   
@@ -536,13 +511,13 @@ export default function StockScreen() {
                         styles.indicatorChip,
                         {
                           backgroundColor: active
-                            ? 'rgba(108, 62, 255, 0.15)'
+                            ? theme.primary + '15'
                             : theme.elevatedCard,
                           borderColor: active ? theme.primary : theme.border,
-                          opacity: (disabled || allowedInFree) ? 0.5 : 1,
+                          opacity: (disabled || allowedInFree) ? 0.4 : 1,
                         },
                       ]}
-                      activeOpacity={0.7}
+                      activeOpacity={0.6}
                     >
                       <Text
                         style={[
@@ -562,9 +537,8 @@ export default function StockScreen() {
                 })}
               </View>
 
-              {/* Indicator Insights */}
               {selectedIndicators.length > 0 && (
-                <View style={styles.insightsContainer}>
+                <View style={[styles.insightsContainer, { borderTopColor: theme.border }]}>
                   <Text style={[styles.insightsTitle, { color: theme.text }]}>
                     📊 Indicator Insights
                   </Text>
@@ -602,7 +576,6 @@ export default function StockScreen() {
               )}
             </View>
 
-            {/* Image Upload Section */}
             <View
               style={[
                 styles.card,
@@ -658,7 +631,6 @@ export default function StockScreen() {
               />
             </View>
 
-            {/* Info Card */}
             <View
               style={[
                 styles.infoCard,
@@ -670,7 +642,7 @@ export default function StockScreen() {
             >
               <Ionicons
                 name="bulb-outline"
-                size={18}
+                size={20}
                 color={theme.primary}
                 style={styles.infoIcon}
               />
@@ -686,7 +658,6 @@ export default function StockScreen() {
             </View>
           </ScrollView>
 
-          {/* Bottom Action Bar */}
           <View
             style={[
               styles.bottomBar,
@@ -711,11 +682,11 @@ export default function StockScreen() {
                 analysisLoading ||
                 (images.length === 0 && !strategyRules.trim())
               }
+              loading={analysisLoading}
               size="lg"
             />
           </View>
         </View>
-        {/* Banner Ad */}
         <View style={styles.bannerContainer}>
           <BannerAd
             unitId={BANNER_AD_UNIT_ID}
@@ -750,24 +721,24 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   logoContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   logoImage: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    letterSpacing: -0.3,
+    letterSpacing: -0.5,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     marginTop: 2,
   },
@@ -775,7 +746,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#2A2B3E',
+    borderBottomColor: '#2E2E3A',
   },
   main: {
     flex: 1,
@@ -783,10 +754,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 0,
+    paddingBottom: 8,
   },
   card: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 16,
   },
@@ -800,14 +771,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   cardSubtitle: {
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
+    lineHeight: 18,
   },
   statusDot: {
     width: 8,
@@ -816,59 +788,59 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   chip: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 14,
     marginLeft: 8,
   },
   chipText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
   countBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 14,
     marginLeft: 8,
   },
   countBadgeText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  // Plan selection styles
-  planContainer: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  planButton: {
-    flex: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 8,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 72,
-  },
-  planLabel: {
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: -0.2,
-    marginBottom: 4,
+  },
+  planContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  planButton: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 68,
+  },
+  planLabel: {
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: -0.3,
   },
   planPrice: {
     fontSize: 11,
     fontWeight: '600',
   },
   section: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   sectionLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
-    marginBottom: 10,
-    letterSpacing: 0.5,
+    marginBottom: 12,
+    letterSpacing: 1,
   },
   modeToggleContainer: {
     flexDirection: 'row',
@@ -876,15 +848,16 @@ const styles = StyleSheet.create({
   },
   modeButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 12,
     borderRadius: 14,
-    borderWidth: 1.5,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 48,
   },
   modeButtonText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: -0.2,
   },
@@ -894,29 +867,29 @@ const styles = StyleSheet.create({
   },
   regionButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 12,
     borderRadius: 16,
-    borderWidth: 1.5,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 56,
+    minHeight: 64,
   },
   regionButtonText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: -0.2,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   textArea: {
     height: 140,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderRadius: 16,
     padding: 16,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   inputFooter: {
     flexDirection: 'row',
@@ -925,7 +898,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   indicatorGrid: {
     flexDirection: 'row',
@@ -933,53 +906,52 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   indicatorChip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 16,
-    borderWidth: 1.5,
+    borderRadius: 999,
+    borderWidth: 2,
   },
   indicatorChipText: {
     fontSize: 13,
     fontWeight: '600',
-    letterSpacing: -0.2,
+    letterSpacing: -0.1,
   },
   insightsContainer: {
     marginTop: 20,
     paddingTop: 20,
     borderTopWidth: 1,
-    borderTopColor: '#2A2B3E',
   },
   insightsTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
     marginBottom: 12,
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   insightCard: {
     marginBottom: 10,
-    padding: 14,
-    borderRadius: 14,
+    padding: 16,
+    borderRadius: 16,
     borderWidth: 1,
   },
   insightTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     marginBottom: 6,
     letterSpacing: -0.2,
   },
   insightText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   infoCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 12,
+    alignItems: 'flex-start',
+    borderRadius: 16,
+    padding: 16,
     marginBottom: 16,
-    borderLeftWidth: 3,
-    gap: 10,
+    borderLeftWidth: 4,
+    gap: 12,
   },
   infoIcon: {
     marginTop: 2,
@@ -988,19 +960,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
-    marginBottom: 2,
+    marginBottom: 4,
+    letterSpacing: -0.2,
   },
   infoText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
-    lineHeight: 16,
+    lineHeight: 19,
   },
   bottomBar: {
     borderTopWidth: 1,
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 14,
     paddingBottom: 16,
   },
 });

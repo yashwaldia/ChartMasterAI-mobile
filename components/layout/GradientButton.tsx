@@ -6,8 +6,10 @@ import {
   ActivityIndicator,
   StyleSheet,
   ViewStyle,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import Colors from '../../constants/Colors';
 
 interface GradientButtonProps {
@@ -30,25 +32,32 @@ export default function GradientButton({
   fullWidth = true,
 }: GradientButtonProps) {
   const theme = Colors.dark;
+  const scaleValue = React.useRef(new Animated.Value(1)).current;
 
   const gradientColors: Record<typeof variant, readonly [string, string, string]> = {
-    primary: ['#8B5CF6', '#6C3EFF', '#7C3AED'], // purple gradient
-    secondary: ['#22d3ee', '#06b6d4', '#0891b2'], // cyan gradient
-    danger: ['#ef4444', '#dc2626', '#b91c1c'], // red gradient
+    primary: [theme.primaryGradientStart, theme.primary, theme.primaryGradientEnd],
+    secondary: ['#22d3ee', '#06b6d4', '#0891b2'],
+    danger: ['#ef4444', '#dc2626', '#b91c1c'],
   };
 
   const paddingMap: Record<
     typeof size,
     { paddingVertical: number; paddingHorizontal: number }
   > = {
-    sm: { paddingVertical: 10, paddingHorizontal: 20 },
+    sm: { paddingVertical: 12, paddingHorizontal: 24 },
     md: { paddingVertical: 14, paddingHorizontal: 28 },
     lg: { paddingVertical: 16, paddingHorizontal: 32 },
   };
 
   const fontSizeMap: Record<typeof size, number> = {
-    sm: 13,
+    sm: 14,
     md: 15,
+    lg: 16,
+  };
+
+  const borderRadiusMap: Record<typeof size, number> = {
+    sm: 12,
+    md: 14,
     lg: 16,
   };
 
@@ -59,56 +68,98 @@ export default function GradientButton({
     opacity: isDisabled ? 0.5 : 1,
   };
 
-  // Dynamic shadow styles - only apply when button is enabled
   const shadowStyle: ViewStyle = isDisabled
     ? {}
     : {
-        shadowColor: variant === 'primary' ? '#6C3EFF' : variant === 'secondary' ? '#06b6d4' : '#dc2626',
+        shadowColor: variant === 'primary' ? theme.primary : variant === 'secondary' ? '#06b6d4' : '#dc2626',
         shadowOffset: {
           width: 0,
-          height: 4,
+          height: 8,
         },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 6,
+        shadowOpacity: variant === 'primary' ? 0.4 : 0.3,
+        shadowRadius: 24,
+        elevation: 8,
       };
+
+  // ✅ Safe haptic feedback with try-catch
+  const triggerHaptic = async () => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch (error) {
+      // Silently fail if haptics not available on device
+      console.log('Haptics not available:', error);
+    }
+  };
+
+  const handlePressIn = () => {
+    if (!isDisabled) {
+      triggerHaptic();
+      Animated.spring(scaleValue, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        friction: 3,
+        tension: 200,
+      }).start();
+    }
+  };
+
+  const handlePressOut = () => {
+    if (!isDisabled) {
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        friction: 3,
+        tension: 200,
+      }).start();
+    }
+  };
+
+  const handlePress = () => {
+    if (!isDisabled) {
+      onPress();
+    }
+  };
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       disabled={isDisabled}
-      activeOpacity={0.8}
+      activeOpacity={0.9}
       style={containerStyle}
     >
-      <LinearGradient
-        colors={gradientColors[variant]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          styles.button,
-          paddingMap[size],
-          shadowStyle, // Apply shadow conditionally
-        ]}
-      >
-        {loading ? (
-          <ActivityIndicator color="#FFFFFF" size="small" />
-        ) : (
-          <Text style={[styles.title, { fontSize: fontSizeMap[size] }]}>{title}</Text>
-        )}
-      </LinearGradient>
+      <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+        <LinearGradient
+          colors={gradientColors[variant]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.button,
+            paddingMap[size],
+            { borderRadius: borderRadiusMap[size] },
+            shadowStyle,
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" size="small" />
+          ) : (
+            <Text style={[styles.title, { fontSize: fontSizeMap[size] }]}>{title}</Text>
+          )}
+        </LinearGradient>
+      </Animated.View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     color: '#FFFFFF',
     fontWeight: '700',
-    letterSpacing: 0.5,
+    letterSpacing: -0.2,
   },
 });

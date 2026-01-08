@@ -1,3 +1,4 @@
+// components/ui/ImagePicker.tsx
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -27,8 +28,8 @@ export default function ImagePickerComponent({
     setLoading(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],  // New SDK 52+ syntax - plain string array
-        allowsEditing: false,    // No crop, true-size input
+        mediaTypes: ['images'],
+        allowsEditing: false,
         quality: 0.8,
       });
 
@@ -50,7 +51,6 @@ export default function ImagePickerComponent({
       return;
     }
 
-    // Request camera permissions
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
@@ -88,9 +88,7 @@ export default function ImagePickerComponent({
 
   return (
     <View style={styles.container}>
-      {/* Upload Buttons Row */}
       <View style={styles.buttonRow}>
-        {/* Gallery Button */}
         <TouchableOpacity
           style={[
             styles.uploadButton,
@@ -102,32 +100,30 @@ export default function ImagePickerComponent({
           ]}
           onPress={pickFromGallery}
           disabled={isUploadDisabled}
-          activeOpacity={0.7}
+          activeOpacity={0.6}
         >
-          <Ionicons name="images-outline" size={28} color={theme.primary} />
+          <Ionicons name="images-outline" size={32} color={theme.primary} />
           <Text style={[styles.buttonText, { color: theme.text }]}>Gallery</Text>
         </TouchableOpacity>
 
-        {/* Camera Button */}
         <TouchableOpacity
           style={[
             styles.uploadButton,
             {
               borderColor: theme.primary,
-              backgroundColor: theme.primary + '15',
+              backgroundColor: theme.primary + '10',
             },
             isUploadDisabled && styles.uploadButtonDisabled,
           ]}
           onPress={pickFromCamera}
           disabled={isUploadDisabled}
-          activeOpacity={0.7}
+          activeOpacity={0.6}
         >
-          <Ionicons name="camera-outline" size={28} color={theme.primary} />
+          <Ionicons name="camera-outline" size={32} color={theme.primary} />
           <Text style={[styles.buttonText, { color: theme.primary }]}>Camera</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Loading Indicator */}
       {loading && (
         <View style={styles.loadingContainer}>
           <Ionicons name="hourglass-outline" size={20} color={theme.primary} />
@@ -137,14 +133,12 @@ export default function ImagePickerComponent({
         </View>
       )}
 
-      {/* Image Limit Badge */}
-      <View style={[styles.limitBadge, { backgroundColor: theme.primary + '20' }]}>
+      <View style={[styles.limitBadge, { backgroundColor: theme.primary + '15' }]}>
         <Text style={[styles.limitText, { color: theme.primary }]}>
           {images.length}/{maxImages} selected
         </Text>
       </View>
 
-      {/* Image Previews */}
       {images.length > 0 && (
         <View style={styles.previewGrid}>
           {images.map((uri, index) => (
@@ -163,9 +157,9 @@ export default function ImagePickerComponent({
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => removeImage(index)}
-                activeOpacity={0.8}
+                activeOpacity={0.7}
               >
-                <Ionicons name="close-circle" size={24} color={theme.error} />
+                <Ionicons name="close-circle" size={28} color={theme.error} />
               </TouchableOpacity>
               <View style={styles.previewOverlay}>
                 <Text style={styles.previewLabel}>Chart {index + 1}</Text>
@@ -192,21 +186,21 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'dashed',
     borderRadius: 16,
-    paddingVertical: 24,
+    paddingVertical: 28,
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 80,
+    minHeight: 88,
   },
   uploadButtonDisabled: {
-    opacity: 0.5,
+    opacity: 0.4,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
-    marginTop: 8,
+    marginTop: 10,
     textAlign: 'center',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   loadingContainer: {
     flexDirection: 'row',
@@ -220,9 +214,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   limitBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
     alignItems: 'center',
     marginBottom: 16,
   },
@@ -230,6 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
   previewGrid: {
     flexDirection: 'row',
@@ -238,30 +233,30 @@ const styles = StyleSheet.create({
   },
   previewItem: {
     position: 'relative',
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   previewImage: {
-    width: 104,
-    height: 104,
-    borderRadius: 14,
+    width: 108,
+    height: 108,
+    borderRadius: 16,
   },
   removeButton: {
     position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 999,
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -270,14 +265,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
   previewLabel: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
 });

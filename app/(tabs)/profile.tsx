@@ -26,7 +26,6 @@ export default function AboutScreen() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={['top', 'left', 'right']}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-        {/* Header */}
         <View
           style={[
             styles.header,
@@ -58,7 +57,6 @@ export default function AboutScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* App Info Hero Card */}
           <View
             style={[
               styles.heroCard,
@@ -87,7 +85,6 @@ export default function AboutScreen() {
             </View>
           </View>
 
-          {/* Features Grid */}
           <View style={styles.featuresGrid}>
             <View
               style={[
@@ -97,8 +94,8 @@ export default function AboutScreen() {
                 },
               ]}
             >
-              <View style={[styles.featureIcon, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
-                <Ionicons name="trending-up" size={28} color={theme.primary} />
+              <View style={[styles.featureIcon, { backgroundColor: theme.primary + '15' }]}>
+                <Ionicons name="trending-up" size={30} color={theme.primary} />
               </View>
               <Text style={[styles.featureTitle, { color: theme.text }]}>
                 Chart Analysis
@@ -116,8 +113,8 @@ export default function AboutScreen() {
                 },
               ]}
             >
-              <View style={[styles.featureIcon, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
-                <Ionicons name="globe" size={28} color="#10B981" />
+              <View style={[styles.featureIcon, { backgroundColor: theme.success + '15' }]}>
+                <Ionicons name="globe" size={30} color={theme.success} />
               </View>
               <Text style={[styles.featureTitle, { color: theme.text }]}>
                 Market Intel
@@ -128,7 +125,6 @@ export default function AboutScreen() {
             </View>
           </View>
 
-          {/* About Section */}
           <View
             style={[
               styles.card,
@@ -141,7 +137,7 @@ export default function AboutScreen() {
               <Text style={[styles.cardTitle, { color: theme.text }]}>
                 About This App
               </Text>
-              <Ionicons name="phone-portrait-outline" size={20} color={theme.primary} />
+              <Ionicons name="phone-portrait-outline" size={22} color={theme.primary} />
             </View>
             <Text style={[styles.bodyText, { color: theme.mutedText }]}>
               ChartMasterAI helps traders turn raw charts and market data into clear, 
@@ -156,7 +152,6 @@ export default function AboutScreen() {
             </Text>
           </View>
 
-          {/* Features List */}
           <View
             style={[
               styles.card,
@@ -169,7 +164,7 @@ export default function AboutScreen() {
               <Text style={[styles.cardTitle, { color: theme.text }]}>
                 What You Can Do
               </Text>
-              <Ionicons name="flash-outline" size={20} color={theme.primary} />
+              <Ionicons name="flash-outline" size={22} color={theme.primary} />
             </View>
 
             <View style={styles.featureList}>
@@ -206,7 +201,6 @@ export default function AboutScreen() {
             </View>
           </View>
 
-          {/* Disclaimer */}
           <View
             style={[
               styles.warningCard,
@@ -217,7 +211,7 @@ export default function AboutScreen() {
             ]}
           >
             <View style={styles.warningHeader}>
-              <Ionicons name="warning-outline" size={20} color={theme.warning} />
+              <Ionicons name="warning-outline" size={22} color={theme.warning} />
               <Text style={[styles.warningTitle, { color: theme.warning }]}>
                 Important Disclaimer
               </Text>
@@ -235,7 +229,6 @@ export default function AboutScreen() {
             </Text>
           </View>
 
-          {/* Contact & Legal */}
           <View
             style={[
               styles.card,
@@ -248,7 +241,7 @@ export default function AboutScreen() {
               <Text style={[styles.cardTitle, { color: theme.text }]}>
                 Contact & Legal
               </Text>
-              <Ionicons name="mail-outline" size={20} color={theme.primary} />
+              <Ionicons name="mail-outline" size={22} color={theme.primary} />
             </View>
             <Text style={[styles.bodyText, { color: theme.mutedText }]}>
               For feedback, bug reports, or feature requests, please contact us through 
@@ -258,40 +251,38 @@ export default function AboutScreen() {
               By using this app, you agree to the Terms of Service and Privacy Policy.
             </Text>
 
-            {/* Privacy Policy & Terms Buttons */}
             <View style={styles.legalButtonsContainer}>
               <TouchableOpacity
                 style={[styles.legalButton, { backgroundColor: theme.elevatedCard, borderColor: theme.primary }]}
                 onPress={handleOpenPrivacyPolicy}
-                activeOpacity={0.7}
+                activeOpacity={0.6}
               >
-                <Ionicons name="shield-checkmark-outline" size={18} color={theme.primary} />
+                <Ionicons name="shield-checkmark-outline" size={20} color={theme.primary} />
                 <Text style={[styles.legalButtonText, { color: theme.text }]}>
                   Privacy Policy
                 </Text>
-                <Ionicons name="open-outline" size={14} color={theme.mutedText} />
+                <Ionicons name="open-outline" size={16} color={theme.mutedText} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.legalButton, { backgroundColor: theme.elevatedCard, borderColor: theme.primary }]}
                 onPress={handleOpenTerms}
-                activeOpacity={0.7}
+                activeOpacity={0.6}
               >
-                <Ionicons name="document-text-outline" size={18} color={theme.primary} />
+                <Ionicons name="document-text-outline" size={20} color={theme.primary} />
                 <Text style={[styles.legalButtonText, { color: theme.text }]}>
                   Terms of Service
                 </Text>
-                <Ionicons name="open-outline" size={14} color={theme.mutedText} />
+                <Ionicons name="open-outline" size={16} color={theme.mutedText} />
               </TouchableOpacity>
             </View>
 
-            {/* Website Button */}
             <TouchableOpacity
               style={[styles.websiteButton, { backgroundColor: theme.primary }]}
               onPress={handleOpenWebsite}
-              activeOpacity={0.8}
+              activeOpacity={0.6}
             >
-              <Ionicons name="globe-outline" size={18} color={theme.primaryText} style={{ marginRight: 8 }} />
+              <Ionicons name="globe-outline" size={20} color={theme.primaryText} style={{ marginRight: 8 }} />
               <Text style={[styles.websiteButtonText, { color: theme.primaryText }]}>
                 Visit Website
               </Text>
@@ -324,27 +315,27 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   logoContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   logoImage: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   logoEmoji: {
     fontSize: 20,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    letterSpacing: -0.3,
+    letterSpacing: -0.5,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     marginTop: 2,
   },
@@ -354,49 +345,49 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     borderRadius: 24,
-    padding: 28,
+    padding: 32,
     marginBottom: 16,
     alignItems: 'center',
   },
   appIconLarge: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
+    width: 80,
+    height: 80,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
     overflow: 'hidden',
   },
   appLogoImage: {
-    width: 68,
-    height: 68,
+    width: 76,
+    height: 76,
   },
   appIconEmoji: {
     fontSize: 36,
   },
   appName: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 8,
+    letterSpacing: -0.7,
+    marginBottom: 10,
     textAlign: 'center',
   },
   tagline: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 16,
+    lineHeight: 22,
+    marginBottom: 20,
   },
   versionBadge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: 14,
   },
   versionText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   featuresGrid: {
     flexDirection: 'row',
@@ -405,35 +396,36 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     flex: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     alignItems: 'center',
   },
   featureIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 60,
+    height: 60,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
   featureEmoji: {
     fontSize: 26,
   },
   featureTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
-    marginBottom: 6,
+    marginBottom: 8,
     textAlign: 'center',
+    letterSpacing: -0.2,
   },
   featureText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
-    lineHeight: 17,
+    lineHeight: 19,
   },
   card: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 16,
   },
@@ -441,24 +433,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   cardEmoji: {
     fontSize: 20,
   },
   bodyText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20,
-    marginBottom: 12,
+    lineHeight: 21,
+    marginBottom: 14,
   },
   featureList: {
-    gap: 14,
+    gap: 16,
   },
   featureListItem: {
     flexDirection: 'row',
@@ -469,16 +461,16 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginTop: 7,
+    marginTop: 8,
   },
   featureListText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20,
+    lineHeight: 21,
   },
   warningCard: {
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 16,
     borderLeftWidth: 4,
@@ -487,54 +479,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   warningEmoji: {
     fontSize: 20,
   },
   warningTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   warningText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20,
-    marginBottom: 12,
+    lineHeight: 21,
+    marginBottom: 14,
   },
   legalButtonsContainer: {
-    gap: 10,
-    marginTop: 8,
-    marginBottom: 12,
+    gap: 12,
+    marginTop: 12,
+    marginBottom: 16,
   },
   legalButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1.5,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 16,
+    borderWidth: 2,
+    minHeight: 56,
   },
   legalButtonText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    marginLeft: 10,
+    marginLeft: 12,
     letterSpacing: -0.2,
   },
   websiteButton: {
-    marginTop: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    minHeight: 56,
   },
   websiteButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
     letterSpacing: -0.2,
   }

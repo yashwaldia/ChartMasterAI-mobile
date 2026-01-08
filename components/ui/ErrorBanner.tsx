@@ -1,7 +1,7 @@
 // components/ui/ErrorBanner.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 
@@ -37,18 +37,18 @@ export default function ErrorBanner({
 
   return (
     <Animated.View
-      entering={FadeInUp.duration(300)}
+      entering={FadeInDown.duration(400).springify()}
       exiting={FadeOutUp.duration(300)}
       style={[
         styles.container,
         {
-          backgroundColor: theme.error + '20',
+          backgroundColor: theme.error + '15',
           borderColor: theme.error,
         },
       ]}
     >
       <View style={styles.iconContainer}>
-        <Ionicons name="alert-circle" size={20} color={theme.error} />
+        <Ionicons name="alert-circle" size={22} color={theme.error} />
       </View>
       <Text style={[styles.text, { color: theme.text }]} numberOfLines={3}>
         {message}
@@ -56,9 +56,9 @@ export default function ErrorBanner({
       <TouchableOpacity
         onPress={handleClose}
         style={styles.closeButton}
-        activeOpacity={0.7}
+        activeOpacity={0.6}
       >
-        <Ionicons name="close" size={20} color={theme.error} />
+        <Ionicons name="close" size={20} color={theme.mutedText} />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -68,28 +68,28 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1.5,
     borderLeftWidth: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 5,
   },
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     flex: 1,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   closeButton: {
     padding: 4,

@@ -1,0 +1,64 @@
+.
+├── app
+│   ├── _layout.tsx
+│   ├── (tabs)
+│   │   ├── _layout.tsx
+│   │   ├── global.tsx
+│   │   ├── profile.tsx
+│   │   └── stock.tsx
+│   ├── index.tsx
+│   └── result
+│       ├── [id].tsx
+│       ├── GlobalResultContent.tsx
+│       └── StockResultContent.tsx
+├── app.json
+├── assets
+│   ├── fonts
+│   │   └── SpaceMono-Regular.ttf
+│   └── images
+│       ├── adaptive-icon.png
+│       ├── favicon.png
+│       ├── icon-logo.png
+│       ├── icon.png
+│       ├── logoo.png
+│       └── splash-icon.png
+├── babel.config.js
+├── components
+│   ├── __tests__
+│   │   └── StyledText-test.js
+│   ├── EditScreenInfo.tsx
+│   ├── ExternalLink.tsx
+│   ├── layout
+│   │   └── GradientButton.tsx
+│   ├── result
+│   ├── StyledText.tsx
+│   ├── Themed.tsx
+│   ├── ui
+│   │   ├── CircularScore.tsx
+│   │   ├── ErrorBanner.tsx
+│   │   └── ImagePicker.tsx
+│   ├── useClientOnlyValue.ts
+│   ├── useClientOnlyValue.web.ts
+│   ├── useColorScheme.ts
+│   ├── useColorScheme.web.ts
+│   └── utils
+│       └── ShareExport.ts
+├── constants
+│   └── Colors.ts
+├── constants.ts
+├── eas.json
+├── expo-env.d.ts
+├── global.css
+├── hooks
+│   └── useAnalysis.tsx
+├── package-lock.json
+├── package.json
+├── project-structure.TXT
+├── services
+│   ├── gemini.ts
+│   └── globalNotificationService.ts
+├── tailwind.config.js
+├── tsconfig.json
+└── types
+
+17 directories, 45 files
