@@ -11,7 +11,7 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAnalysis } from '../../hooks/useAnalysis';
@@ -40,6 +40,7 @@ export type ActiveResult = {
 };
 
 export default function ResultScreen() {
+  const insets = useSafeAreaInsets(); // ✅ Add this
   const { lastResult, clearResult, loading } = useAnalysis();
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -234,7 +235,7 @@ export default function ResultScreen() {
             style={styles.modalOverlay}
             onPress={() => setShareModalVisible(false)}
           >
-            <Pressable style={[styles.modalContent, { backgroundColor: theme.cardBackground }]}>
+            <Pressable style={[styles.modalContent, { backgroundColor: theme.cardBackground,      paddingBottom: Math.max(24, insets.bottom + 16) }]}>
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>
                   Share Analysis
@@ -426,7 +427,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
-    paddingBottom: 40,
   },
   modalHeader: {
     flexDirection: 'row',
