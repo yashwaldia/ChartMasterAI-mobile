@@ -33,7 +33,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.ab1224.chartmasterai",
-      "versionCode": 3               // ⬅️ add this line, > 2
+      "versionCode": 3 
     },
     "web": {
       "bundler": "metro",
