@@ -1,6 +1,6 @@
 // app/result/GlobalResultContent.tsx
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import { ActiveResult } from './[id]';
@@ -26,83 +26,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
     return theme.warning;
   };
 
-  const plan = active.plan || 'Free';
-
-  const UpgradeCard = ({ targetPlan }: { targetPlan: 'Pro' | 'Advanced' }) => {
-    const handleUpgrade = () => {
-      Linking.openURL('https://chartmasterai.com/upgrade');
-    };
-
-    const features = {
-      Pro: [
-        'Full 10-indicator analysis',
-        'Multi-timeframe trend strength',
-        'Buy/Sell scores & Risk meter',
-        'Entry/Exit suggestions',
-        'Major news summaries',
-      ],
-      Advanced: [
-        'All Pro features',
-        'Hedge-fund style macro analysis',
-        'Sector rotation & flows',
-        'VIX & DXY correlation analysis',
-        'Institutional Alpha calls',
-        'Pattern education blocks',
-      ],
-    };
-
-    const pricing = {
-      Pro: '$4.99/month',
-      Advanced: '$9.99/month',
-    };
-
-    return (
-      <View
-        style={[
-          styles.upgradeCard,
-          {
-            backgroundColor: theme.cardBackground,
-            borderColor: theme.primary,
-          },
-        ]}
-      >
-        <View style={styles.upgradeHeader}>
-          <Ionicons name="rocket" size={32} color={theme.primary} />
-          <View style={styles.upgradeHeaderText}>
-            <Text style={[styles.upgradeTitle, { color: theme.text }]}>
-              Upgrade to {targetPlan}
-            </Text>
-          </View>
-        </View>
-
-        <Text style={[styles.upgradeSubtitle, { color: theme.mutedText }]}>
-          Unlock advanced features:
-        </Text>
-
-        <View style={styles.featureList}>
-          {features[targetPlan].map((feature, idx) => (
-            <View key={idx} style={styles.featureItem}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.success} />
-              <Text style={[styles.featureText, { color: theme.text }]}>
-                {feature}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        <TouchableOpacity
-          onPress={handleUpgrade}
-          style={[styles.upgradeButton, { backgroundColor: theme.primary }]}
-          activeOpacity={0.6}
-        >
-          <Text style={[styles.upgradeButtonText, { color: theme.primaryText }]}>
-            Upgrade Now
-          </Text>
-          <Ionicons name="arrow-forward" size={20} color={theme.primaryText} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  // UPDATED: Removed UpgradeCard component to prevent "fake paywall" rejection
 
   const RegionStrengthGrid = () => {
     if (!active.regionalStrength) return null;
@@ -408,9 +332,7 @@ export default function GlobalResultContent({ active }: GlobalResultContentProps
         </View>
       </View>
 
-      {plan === 'Free' && <UpgradeCard targetPlan="Pro" />}
-
-      {plan === 'Pro' && <UpgradeCard targetPlan="Advanced" />}
+      {/* UPDATED: Removed Upsell/Upgrade Cards to comply with policy */}
 
       <View
         style={[
@@ -564,67 +486,6 @@ const styles = StyleSheet.create({
   reportContainer: {
     padding: 18,
     borderRadius: 16,
-  },
-
-  upgradeCard: {
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 16,
-    borderWidth: 2,
-  },
-  upgradeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
-  },
-  upgradeHeaderText: {
-    flex: 1,
-  },
-  upgradeTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-  },
-  upgradePrice: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 2,
-  },
-  upgradeSubtitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 16,
-  },
-  featureList: {
-    gap: 12,
-    marginBottom: 20,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  featureText: {
-    fontSize: 14,
-    fontWeight: '500',
-    flex: 1,
-    lineHeight: 20,
-  },
-  upgradeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    gap: 10,
-    minHeight: 56,
-  },
-  upgradeButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: -0.3,
   },
 
   disclaimerCard: {

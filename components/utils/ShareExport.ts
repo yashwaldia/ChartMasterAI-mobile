@@ -126,8 +126,9 @@ function formatAnalysisText(active: ActiveResult): string {
   const modeTitle = active.mode === 'STOCK' ? '📊 Stock Analysis' : '🌍 Global Intelligence';
   const region = active.country === 'IN' ? '🇮🇳 India (INR)' : '🌍 International (USD)';
 
+  // UPDATED: Branding to ChartMasterAI
   let output = `${modeTitle}\n`;
-  output += `AI Stock Analyzer • ${region}\n`;
+  output += `ChartMasterAI • ${region}\n`;
   output += `Generated: ${active.timestamp}\n\n`;
   output += `${'═'.repeat(60)}\n\n`;
 
@@ -203,7 +204,6 @@ function generatePdfHtml(active: ActiveResult): string {
     return `
       <div style="flex: 1; text-align: center;">
         <svg width="120" height="120" viewBox="0 0 120 120" style="margin: 0 auto;">
-          <!-- Background Circle -->
           <circle
             cx="60"
             cy="60"
@@ -212,7 +212,6 @@ function generatePdfHtml(active: ActiveResult): string {
             stroke="${theme.border}"
             stroke-width="8"
           />
-          <!-- Progress Circle -->
           <circle
             cx="60"
             cy="60"
@@ -225,7 +224,6 @@ function generatePdfHtml(active: ActiveResult): string {
             transform="rotate(-90 60 60)"
             stroke-linecap="round"
           />
-          <!-- Score Text -->
           <text
             x="60"
             y="55"
@@ -388,7 +386,7 @@ function generatePdfHtml(active: ActiveResult): string {
 <body>
   <div class="header">
     <h1>${active.mode === 'STOCK' ? '📊 Stock Intelligence' : '🌍 Global Intelligence'}</h1>
-    <p>AI Stock Analyzer | ${active.country === 'IN' ? '🇮🇳 India (INR)' : '🌍 International (USD)'} | ${active.timestamp}</p>
+    <p>ChartMasterAI | ${active.country === 'IN' ? '🇮🇳 India (INR)' : '🌍 International (USD)'} | ${active.timestamp}</p>
   </div>
 `;
 

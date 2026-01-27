@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 
 const APP_VERSION = '1.0.0';
-const BUILD_LABEL = 'Mobile Beta';
+// UPDATED: Changed label to 'Stable' for Production release
+const BUILD_LABEL = 'Stable v1.0';
 
 export default function AboutScreen() {
   const theme = Colors.dark;

@@ -44,16 +44,17 @@ type Mode = (typeof MODES)[number];
 type Country = (typeof COUNTRIES)[number];
 type Plan = (typeof PLANS)[number];
 
+// UPDATED: Removed pricing strings to prevent misleading "Paywall" signals
 const PRICING = {
   IN: {
-    Free: { price: '₹0', label: 'Free' },
-    Pro: { price: '₹99/mo', label: 'Pro' },
-    Advanced: { price: '₹299/mo', label: 'Advanced' },
+    Free: { price: '', label: 'Free' },
+    Pro: { price: '', label: 'Pro' },
+    Advanced: { price: '', label: 'Advanced' },
   },
   OTHER: {
-    Free: { price: '$0', label: 'Free' },
-    Pro: { price: '$4.99/mo', label: 'Pro' },
-    Advanced: { price: '$9.99/mo', label: 'Advanced' },
+    Free: { price: '', label: 'Free' },
+    Pro: { price: '', label: 'Pro' },
+    Advanced: { price: '', label: 'Advanced' },
   },
 };
 
@@ -72,7 +73,8 @@ export default function StockScreen() {
 
   const [mode, setMode] = useState<Mode>('SINGLECHART');
   const [country, setCountry] = useState<Country>('IN');
-  const [plan, setPlan] = useState<Plan>('Free');
+  // UPDATED: Default to 'Advanced' so all features are free and unlocked immediately
+  const [plan, setPlan] = useState<Plan>('Advanced');
   const [strategyRules, setStrategyRules] = useState('');
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
@@ -112,7 +114,8 @@ export default function StockScreen() {
   }, []);
 
   const toggleIndicator = (indicator: string) => {
-    const maxIndicators = plan === 'Free' ? 3 : 5;
+    // UPDATED: Allow more indicators since plan is now fully unlocked
+    const maxIndicators = 10; 
     
     setSelectedIndicators(prev =>
       prev.includes(indicator)
@@ -175,8 +178,8 @@ export default function StockScreen() {
     }
   };
 
-  const pricing = PRICING[country];
-  const maxIndicators = plan === 'Free' ? 3 : 5;
+  // UPDATED: Set max limit higher for the unlocked experience
+  const maxIndicators = 10;
 
   return (
     <SafeAreaView
@@ -220,62 +223,7 @@ export default function StockScreen() {
               <ErrorBanner message={error} onClose={() => setError('')} />
             ) : null}
 
-            <View
-              style={[
-                styles.card,
-                {
-                  backgroundColor: theme.cardBackground,
-                },
-              ]}
-            >
-              <View style={styles.cardHeader}>
-                <View style={styles.cardHeaderLeft}>
-                  <Text style={[styles.cardTitle, { color: theme.text }]}>
-                    Select Plan
-                  </Text>
-                  <Text
-                    style={[
-                      styles.cardSubtitle,
-                      { color: theme.mutedText },
-                    ]}
-                  >
-                    Choose analysis depth
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.planContainer}>
-                {PLANS.map(p => {
-                  const active = plan === p;
-                  const planPricing = pricing[p];
-                  return (
-                    <TouchableOpacity
-                      key={p}
-                      onPress={() => setPlan(p)}
-                      style={[
-                        styles.planButton,
-                        {
-                          backgroundColor: active ? theme.primary : 'transparent',
-                          borderColor: active ? theme.primary : theme.border,
-                        },
-                      ]}
-                      activeOpacity={0.6}
-                    >
-                      <Text
-                        style={[
-                          styles.planLabel,
-                          {
-                            color: active ? theme.primaryText : theme.text,
-                          },
-                        ]}
-                      >
-                        {planPricing.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
+            {/* UPDATED: Removed the "Select Plan" Card entirely to fix the Paywall Rejection */}
 
             <View
               style={[
@@ -461,9 +409,7 @@ export default function StockScreen() {
                       { color: theme.mutedText },
                     ]}
                   >
-                    {plan === 'Free' 
-                      ? 'Select up to 3 basic indicators (Free)'
-                      : 'Select up to 5 indicators'}
+                    Select up to 10 indicators (Full Access)
                   </Text>
                 </View>
                 <View
@@ -499,14 +445,14 @@ export default function StockScreen() {
                   const disabled =
                     !active && selectedIndicators.length >= maxIndicators;
                   
-                  const allowedInFree = plan === 'Free' && 
-                    !['RSI', 'MACD', 'EMA 20/50/200'].includes(indicator);
+                  // UPDATED: Removed "allowedInFree" logic to unlock all
+                  const allowedInFree = true; 
                   
                   return (
                     <TouchableOpacity
                       key={indicator}
                       onPress={() => toggleIndicator(indicator)}
-                      disabled={disabled || allowedInFree}
+                      disabled={disabled}
                       style={[
                         styles.indicatorChip,
                         {
@@ -514,7 +460,7 @@ export default function StockScreen() {
                             ? theme.primary + '15'
                             : theme.elevatedCard,
                           borderColor: active ? theme.primary : theme.border,
-                          opacity: (disabled || allowedInFree) ? 0.4 : 1,
+                          opacity: disabled ? 0.4 : 1,
                         },
                       ]}
                       activeOpacity={0.6}
@@ -530,7 +476,6 @@ export default function StockScreen() {
                         ]}
                       >
                         {indicator}
-                        {allowedInFree && ' 🔒'}
                       </Text>
                     </TouchableOpacity>
                   );

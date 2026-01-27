@@ -37,11 +37,7 @@ const DEFAULT_INDICES = [
   'Microsoft',
 ];
 
-const PRICING = {
-  Free: { price: '$0', label: 'Free' },
-  Pro: { price: '$4.99/mo', label: 'Pro' },
-  Advanced: { price: '$9.99/mo', label: 'Advanced' },
-};
+// UPDATED: Removed Pricing Constants to prevent "Fake Paywall" rejection
 
 const BANNER_AD_UNIT_ID = __DEV__
   ? TestIds.BANNER
@@ -57,7 +53,8 @@ export default function GlobalScreen() {
   const params = useLocalSearchParams();
   const theme = Colors.dark;
 
-  const [plan, setPlan] = useState<Plan>('Free');
+  // UPDATED: Default to 'Advanced' to unlock full capabilities immediately
+  const [plan, setPlan] = useState<Plan>('Advanced');
   const [marketBadges, setMarketBadges] = useState<string[]>(DEFAULT_INDICES);
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
@@ -205,49 +202,7 @@ export default function GlobalScreen() {
               <ErrorBanner message={error} onClose={() => setError('')} />
             ) : null}
 
-            <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
-              <View style={styles.cardHeader}>
-                <View style={styles.cardHeaderLeft}>
-                  <Text style={[styles.cardTitle, { color: theme.text }]}>
-                    Select Plan
-                  </Text>
-                  <Text style={[styles.cardSubtitle, { color: theme.mutedText }]}>
-                    Choose analysis depth
-                  </Text>
-                </View>
-                <View style={[styles.statusDot, { backgroundColor: theme.success }]} />
-              </View>
-
-              <View style={styles.planContainer}>
-                {PLANS.map(p => {
-                  const active = plan === p;
-                  const pricing = PRICING[p];
-                  return (
-                    <TouchableOpacity
-                      key={p}
-                      onPress={() => setPlan(p)}
-                      style={[
-                        styles.planButton,
-                        {
-                          backgroundColor: active ? theme.primary : 'transparent',
-                          borderColor: active ? theme.primary : theme.border,
-                        },
-                      ]}
-                      activeOpacity={0.6}
-                    >
-                      <Text
-                        style={[
-                          styles.planLabel,
-                          { color: active ? theme.primaryText : theme.text },
-                        ]}
-                      >
-                        {pricing.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
+            {/* UPDATED: Removed "Select Plan" Card to comply with Policy */}
 
             <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
               <View style={styles.cardHeader}>
@@ -468,29 +423,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.2,
-  },
-  planContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  planButton: {
-    flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 68,
-  },
-  planLabel: {
-    fontSize: 15,
-    fontWeight: '700',
-    letterSpacing: -0.3,
-  },
-  planPrice: {
-    fontSize: 11,
-    fontWeight: '600',
   },
   badgeContainer: {
     flexDirection: 'row',

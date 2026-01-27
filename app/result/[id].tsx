@@ -40,7 +40,7 @@ export type ActiveResult = {
 };
 
 export default function ResultScreen() {
-  const insets = useSafeAreaInsets(); // ✅ Add this
+  const insets = useSafeAreaInsets();
   const { lastResult, clearResult, loading } = useAnalysis();
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -180,6 +180,7 @@ export default function ResultScreen() {
             <Text style={[styles.headerTitle, { color: theme.text }]}>
               {isStockMode ? 'Chart Analysis' : 'Global Intelligence'}
             </Text>
+            {/* UPDATED: Removed specific Plan name to avoid "Fake Paywall" confusion */}
             <Text style={[styles.headerSubtitle, { color: theme.mutedText }]}>
               {isStockMode
                 ? lastResult.stockMode === 'SINGLECHART'
@@ -187,7 +188,7 @@ export default function ResultScreen() {
                   : lastResult.stockMode === 'MULTICHART'
                   ? 'Multi-Timeframe'
                   : 'Strategy Analysis'
-                : `${lastResult.plan || 'Free'} Plan`}
+                : 'Market Intelligence'}
             </Text>
           </View>
 
@@ -235,7 +236,7 @@ export default function ResultScreen() {
             style={styles.modalOverlay}
             onPress={() => setShareModalVisible(false)}
           >
-            <Pressable style={[styles.modalContent, { backgroundColor: theme.cardBackground,      paddingBottom: Math.max(24, insets.bottom + 16) }]}>
+            <Pressable style={[styles.modalContent, { backgroundColor: theme.cardBackground, paddingBottom: Math.max(24, insets.bottom + 16) }]}>
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>
                   Share Analysis
