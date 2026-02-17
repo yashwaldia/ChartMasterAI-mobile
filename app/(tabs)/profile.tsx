@@ -79,11 +79,11 @@ export default function AboutScreen() {
             <Text style={[styles.tagline, { color: theme.mutedText }]}>
               AI-powered stock analysis for smarter trading decisions
             </Text>
-            <View style={[styles.versionBadge, { backgroundColor: theme.elevatedCard }]}>
+            {/* <View style={[styles.versionBadge, { backgroundColor: theme.elevatedCard }]}>
               <Text style={[styles.versionText, { color: theme.mutedText }]}>
                 v{APP_VERSION} • {BUILD_LABEL}
               </Text>
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.featuresGrid}>
