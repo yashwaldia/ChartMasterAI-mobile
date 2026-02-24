@@ -3,11 +3,10 @@ import React from 'react';
 import { View, ScrollView, Text, StyleSheet, Linking, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import Colors from '../../constants/Colors';
 
-const APP_VERSION = '1.0.0';
-// UPDATED: Changed label to 'Stable' for Production release
-const BUILD_LABEL = 'Stable v1.0';
+const APP_VERSION = Constants.expoConfig?.version ?? '1.2.0';
 
 export default function AboutScreen() {
   const theme = Colors.dark;
@@ -79,11 +78,11 @@ export default function AboutScreen() {
             <Text style={[styles.tagline, { color: theme.mutedText }]}>
               AI-powered stock analysis for smarter trading decisions
             </Text>
-            {/* <View style={[styles.versionBadge, { backgroundColor: theme.elevatedCard }]}>
+            <View style={[styles.versionBadge, { backgroundColor: theme.elevatedCard }]}>
               <Text style={[styles.versionText, { color: theme.mutedText }]}>
-                v{APP_VERSION} • {BUILD_LABEL}
+                v{APP_VERSION} • Stable
               </Text>
-            </View> */}
+            </View>
           </View>
 
           <View style={styles.featuresGrid}>
